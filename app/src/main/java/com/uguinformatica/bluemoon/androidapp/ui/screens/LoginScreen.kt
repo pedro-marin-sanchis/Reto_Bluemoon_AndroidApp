@@ -27,6 +27,7 @@ import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.ForgotPassword
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.HeaderImageLogin
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.LoginButton
+import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.NotAccount
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.PasswordField
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.UserField
 
@@ -53,7 +54,10 @@ fun LoginScreen() {
                 password = newPassword
             }
             Spacer(modifier = Modifier.padding(16.dp))
+
             LoginButton()
+            NotAccount()
+
             Spacer(modifier = Modifier.padding(16.dp))
             ForgotPassword(Modifier.align(Alignment.End))
         }
