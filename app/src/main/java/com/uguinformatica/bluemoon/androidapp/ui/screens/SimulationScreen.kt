@@ -27,6 +27,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,20 +38,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_primaryContainer
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 
 @Composable
-fun SimulationScreen(paddingValues: PaddingValues) {
+fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: SimulationViewModel) {
 
-    var openAlertDialog by remember { mutableStateOf(false) }
-    var openAddItemDialog by remember { mutableStateOf(false) }
+    val openAlertDialog by simulationViewModel.openAlertDialog.observeAsState(false)
+    val openAddItemDialog by simulationViewModel.openAddItemDialog.observeAsState(false)
 
     when {
         openAlertDialog -> {
             AlertDialogExample(
-                onDismissRequest = { openAlertDialog = false },
+                onDismissRequest = { simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
                 onConfirmation = {
-                    openAlertDialog = false },
-                dialogTitle = "Confirm trade"
+                    simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
+                dialogTitle = "Confirm trade",
+                simulationViewModel
             )
         }
     }
@@ -58,11 +61,13 @@ fun SimulationScreen(paddingValues: PaddingValues) {
     when {
         openAddItemDialog -> {
             AddItemDialog(
-                onDismissRequest = { openAddItemDialog = false },
-                onConfirmation = { openAddItemDialog = false }
+                onDismissRequest = { simulationViewModel.changeOpenAddItemDialog(openAddItemDialog) },
+                onConfirmation = { simulationViewModel.changeOpenAddItemDialog(openAddItemDialog) },
+                simulationViewModel
             )
         }
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,7 +84,7 @@ fun SimulationScreen(paddingValues: PaddingValues) {
                 ),
         ) {
             IconButton(
-                onClick = { openAddItemDialog = true },
+                onClick = { simulationViewModel.changeOpenAddItemDialog(openAddItemDialog) },
                 modifier = Modifier.align(Alignment.BottomEnd),
             ) {
                 Icon(
@@ -108,7 +113,7 @@ fun SimulationScreen(paddingValues: PaddingValues) {
         Divider(modifier = Modifier.size(350.dp,3.dp))
 
         Button(
-            onClick = { openAlertDialog = true },
+            onClick = { simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
             modifier = Modifier.padding(top = 50.dp)
         ) {
             Text(text = "Confirm the trade")
@@ -121,6 +126,7 @@ fun AlertDialogExample(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     dialogTitle: String,
+    simulationViewModel: SimulationViewModel
 ) {
     AlertDialog(
         title = { Text(
@@ -155,14 +161,15 @@ fun AlertDialogExample(
 fun AddItemDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
+    simulationViewModel: SimulationViewModel
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
 
-        var weight by remember { mutableStateOf("") }
+        val weight by simulationViewModel.weight.observeAsState("")
 
-        var description by remember { mutableStateOf("") }
+        val description by simulationViewModel.description.observeAsState("")
 
-        var sellPrice by remember { mutableStateOf("") }
+        val sellPrice by simulationViewModel.sellPrice.observeAsState()
 
         Card(
             modifier = Modifier
@@ -185,24 +192,26 @@ fun AddItemDialog(
 
                 TextField(
                     value = weight,
-                    onValueChange = { weight = it },
+                    onValueChange = { simulationViewModel.setWeight(weight = it) },
                     label = { Text(text = "Weight") }
                 )
 
                 TextField(
                     value = description,
-                    onValueChange = { description = it },
+                    onValueChange = { simulationViewModel.setDescription(description = it) },
                     label = { Text(text = "Description") },
                     modifier = Modifier.padding(top = 10.dp)
                 )
 
-                TextField(
-                    value = sellPrice,
-                    onValueChange = { sellPrice = it },
-                    readOnly = true,
-                    label = { Text(text = "Sell Price") },
-                    modifier = Modifier.padding(top = 10.dp)
-                )
+                sellPrice?.let {
+                    TextField(
+                        value = it,
+                        onValueChange = { simulationViewModel.setSellPrice(sellPrice = it) },
+                        readOnly = true,
+                        label = { Text(text = "Sell Price") },
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                }
 
                 Row(
                     modifier = Modifier
