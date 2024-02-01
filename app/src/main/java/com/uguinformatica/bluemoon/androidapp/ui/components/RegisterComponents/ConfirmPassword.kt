@@ -1,4 +1,4 @@
-package com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents
+package com.uguinformatica.bluemoon.androidapp.ui.components.RegisterComponents
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,7 +20,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
-fun PasswordVisibleIcon(passwordIsVisible: Boolean, onToggleVisibility: () -> Unit) {
+fun ConfirmPasswordVisibleIcon(passwordIsVisible: Boolean, onToggleVisibility: () -> Unit) {
     val image = if (passwordIsVisible) {
         Icons.Default.Visibility
     } else {
@@ -38,7 +38,7 @@ fun PasswordVisibleIcon(passwordIsVisible: Boolean, onToggleVisibility: () -> Un
 }
 
 @Composable
-fun PasswordField(passwordState: String, onTextFieldChanged: (String) -> Unit) {
+fun ConfirmPasswordField(passwordState: String, onTextFieldChanged: (String) -> Unit) {
     var passwordIsVisible by rememberSaveable { mutableStateOf(false) }
     val visualTransformation = if (passwordIsVisible) {
         VisualTransformation.None
@@ -49,14 +49,14 @@ fun PasswordField(passwordState: String, onTextFieldChanged: (String) -> Unit) {
     TextField(
         value = passwordState,
         onValueChange = { onTextFieldChanged(it) },
-        placeholder = { Text(text = "Password") },
+        placeholder = { Text(text = "Confirm Password") },
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
         maxLines = 1,
         visualTransformation = visualTransformation,
         trailingIcon = {
-            PasswordVisibleIcon(passwordIsVisible) {
+            ConfirmPasswordVisibleIcon(passwordIsVisible) {
                 passwordIsVisible = !passwordIsVisible
                 onTextFieldChanged(passwordState)
             }

@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.ForgotPassword
-import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.HeaderImage
+import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.HeaderImageLogin
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.LoginButton
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.PasswordField
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.UserField
@@ -45,7 +45,7 @@ fun LoginScreen() {
                 .fillMaxSize()
                 .align(Alignment.Center)
         ) {
-            HeaderImage(Modifier.align(Alignment.CenterHorizontally))
+            HeaderImageLogin(Modifier.align(Alignment.CenterHorizontally))
             Spacer(modifier = Modifier.padding(16.dp))
             UserField(username) { newUsername -> username = newUsername }
             Spacer(modifier = Modifier.padding(16.dp))
