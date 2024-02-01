@@ -4,11 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -26,6 +24,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uguinformatica.bluemoon.androidapp.R
+import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.ForgotPassword
+import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.HeaderImage
+import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.LoginButton
+import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.PasswordField
+import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.UserField
 
 @Composable
 fun LoginScreen() {
@@ -57,107 +60,5 @@ fun LoginScreen() {
     }
 }
 
-@Composable
-fun LoginButton() {
-    Box(
-        modifier = Modifier
-            .width(200.dp)
-            .height(50.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Button(
-            onClick = { /* Do something! */ },
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Text("Login")
-        }
-    }
-}
 
-@Composable
-fun ForgotPassword(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-    ) {
-        // Contenido de ForgotPassword
-        Text(
-            text = "Forgot Password?",
-            modifier = Modifier.clickable { },
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1834CE)
-        )
-    }
-}
-
-@Composable
-fun HeaderImage(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(id = R.drawable.bluemoon),
-        contentDescription = "Header Image",
-        modifier = modifier
-    )
-}
-
-@Composable
-fun UserField(user: String, onTextFieldChanged: (String) -> Unit) {
-    TextField(
-        value = user,
-        onValueChange = { onTextFieldChanged(it) },
-        label = { Text(text = "Username") },
-        keyboardOptions = KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Text
-        ),
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-@Composable
-fun PasswordVisibleIcon(passwordIsVisible: Boolean, onToggleVisibility: () -> Unit) {
-    val image = if (passwordIsVisible) {
-        Icons.Default.VisibilityOff
-    } else {
-        Icons.Default.Visibility
-    }
-
-    IconButton(
-        onClick = onToggleVisibility
-    ) {
-        Icon(
-            imageVector = image,
-            contentDescription = ""
-        )
-    }
-}
-
-@Composable
-fun PasswordField(passwordState: String, onTextFieldChanged: (String) -> Unit) {
-    var passwordIsVisible by rememberSaveable { mutableStateOf(false) }
-    val visualTransformation = if (passwordIsVisible) {
-        VisualTransformation.None
-    } else {
-        PasswordVisualTransformation()
-    }
-
-    TextField(
-        value = passwordState,
-        onValueChange = { onTextFieldChanged(it) },
-        placeholder = { Text(text = "Password") },
-        modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        singleLine = true,
-        maxLines = 1,
-        visualTransformation = visualTransformation,
-        trailingIcon = {
-            if (passwordState.isNotBlank()) {
-                PasswordVisibleIcon(passwordIsVisible) {
-                    passwordIsVisible = !passwordIsVisible
-                    onTextFieldChanged(passwordState)
-                }
-            } else null
-        }
-    )
-}
 
