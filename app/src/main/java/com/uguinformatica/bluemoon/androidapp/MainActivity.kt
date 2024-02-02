@@ -62,6 +62,7 @@ import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_primaryContai
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondary
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondaryContainer
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_tertiary
+import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 import kotlinx.coroutines.launch
@@ -82,13 +83,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MyScaffold(simulationViewModel: SimulationViewModel, navController: NavController, snackbarHostState: SnackbarHostState, drawerState: DrawerState) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { MyTopAppBar(drawerState) }
     ) {
-        SimulationScreen(it, simulationViewModel)
+        //SimulationScreen(it, simulationViewModel)
+        ProductScreen(it)
     }
 }
 
@@ -165,12 +168,12 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                 )
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
-                    icon = { Icon(imageVector = Icons.Default.CurrencyExchange, contentDescription = "Stats") },
+                    icon = { Icon(imageVector = Icons.Default.CurrencyExchange, contentDescription = "Simulation") },
                     label = { Text(text = "Simulator", color = Color.White) },
                     selected = isSelected == "Simulator",
                     onClick = {
                         isSelected = "Simulator"
-                        navController.navigate("Simulator")
+                        navController.navigate("SimulatorScreen")
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
@@ -181,12 +184,12 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                 )
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
-                    icon = { Icon(imageVector = Icons.Default.Shop, contentDescription = "Calculate") },
+                    icon = { Icon(imageVector = Icons.Default.Shop, contentDescription = "Products") },
                     label = { Text(text = "Products", color = Color.White) },
                     selected = isSelected == "Products",
                     onClick = {
                         isSelected = "Products"
-                        navController.navigate("Products")
+                        navController.navigate("ProductsScreen")
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
@@ -197,12 +200,12 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                 )
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
-                    icon = { Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "Log Out") },
+                    icon = { Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "Orders") },
                     label = { Text(text = "Orders", color = Color.White) },
                     selected = isSelected == "Orders",
                     onClick = {
                         isSelected = "Orders"
-                        navController.navigate("Orders")
+                        navController.navigate("OrdersScreen")
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
@@ -213,7 +216,7 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                 )
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
-                    icon = { Icon(imageVector = Icons.Default.Close, contentDescription = "Log Out") },
+                    icon = { Icon(imageVector = Icons.Default.Close, contentDescription = "Close") },
                     label = { Text(text = "Close", color = Color.White) },
                     selected = isSelected == "Close",
                     onClick = {
