@@ -9,18 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.domain.models.Product
-import com.uguinformatica.bluemoon.androidapp.ui.components.ProductListItem
-
+import com.uguinformatica.bluemoon.androidapp.ui.components.CartComponents.CartProductItem
 
 @Composable
-fun ProductScreen(paddingValues: PaddingValues) {
+fun CartScreen(paddingValues: PaddingValues) {
     LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
+        columns = StaggeredGridCells.Fixed(1),
         content = {
-            getProducts().let {
-                items(it) {index ->
-                    ProductListItem(product = index)
-                }
+            items(getProducts()) { index ->
+                CartProductItem(product = index)
             }
         },
         modifier = Modifier.padding(paddingValues),

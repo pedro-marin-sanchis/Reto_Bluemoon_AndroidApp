@@ -1,6 +1,5 @@
 package com.uguinformatica.bluemoon.androidapp
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -50,12 +49,11 @@ import com.uguinformatica.bluemoon.androidapp.theme.BlueMoon_aplicationTheme
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_tertiaryContainer
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondary
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondaryContainer
-import com.uguinformatica.bluemoon.androidapp.ui.screens.OrderScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.CartScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -70,7 +68,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MyScaffold(simulationViewModel: SimulationViewModel, navController: NavController, snackbarHostState: SnackbarHostState, drawerState: DrawerState) {
     Scaffold(
@@ -79,7 +76,8 @@ fun MyScaffold(simulationViewModel: SimulationViewModel, navController: NavContr
     ) {
         //SimulationScreen(it, simulationViewModel)
         //ProductScreen(it)
-        OrderScreen(paddingValues = it)
+        //OrderScreen(paddingValues = it)
+        CartScreen(paddingValues = it)
     }
 }
 

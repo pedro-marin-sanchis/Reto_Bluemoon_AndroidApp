@@ -119,7 +119,7 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
 }
 
 @Composable
-fun AlertDialogExample(
+private fun AlertDialogExample(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     dialogTitle: String,
