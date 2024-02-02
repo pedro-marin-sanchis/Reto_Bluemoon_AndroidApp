@@ -2,23 +2,17 @@ package com.uguinformatica.bluemoon.androidapp
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.widget.ImageButton
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.Shop
@@ -44,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,16 +47,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.uguinformatica.bluemoon.androidapp.theme.BlueMoon_aplicationTheme
-import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_tertiary
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_tertiaryContainer
-import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_onTertiary
-import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_primary
-import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_primaryContainer
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondary
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondaryContainer
-import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_tertiary
-import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductScreen
-import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.OrderScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 import kotlinx.coroutines.launch
 
@@ -91,7 +78,8 @@ fun MyScaffold(simulationViewModel: SimulationViewModel, navController: NavContr
         topBar = { MyTopAppBar(drawerState) }
     ) {
         //SimulationScreen(it, simulationViewModel)
-        ProductScreen(it)
+        //ProductScreen(it)
+        OrderScreen(paddingValues = it)
     }
 }
 
@@ -153,7 +141,7 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
                     icon = { Icon(imageVector = Icons.Default.House, contentDescription = "UserData") },
-                    label = { Text(text = "User Data", color = Color.White) },
+                    label = { Text(text = "User Data") },
                     selected =  isSelected == "User Data",
                     onClick = {
                         isSelected = "User Data"
@@ -169,7 +157,7 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
                     icon = { Icon(imageVector = Icons.Default.CurrencyExchange, contentDescription = "Simulation") },
-                    label = { Text(text = "Simulator", color = Color.White) },
+                    label = { Text(text = "Simulator") },
                     selected = isSelected == "Simulator",
                     onClick = {
                         isSelected = "Simulator"
@@ -185,7 +173,7 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
                     icon = { Icon(imageVector = Icons.Default.Shop, contentDescription = "Products") },
-                    label = { Text(text = "Products", color = Color.White) },
+                    label = { Text(text = "Products") },
                     selected = isSelected == "Products",
                     onClick = {
                         isSelected = "Products"
@@ -201,7 +189,7 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
                     icon = { Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "Orders") },
-                    label = { Text(text = "Orders", color = Color.White) },
+                    label = { Text(text = "Orders") },
                     selected = isSelected == "Orders",
                     onClick = {
                         isSelected = "Orders"
@@ -217,7 +205,7 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
                     icon = { Icon(imageVector = Icons.Default.Close, contentDescription = "Close") },
-                    label = { Text(text = "Close", color = Color.White) },
+                    label = { Text(text = "Close") },
                     selected = isSelected == "Close",
                     onClick = {
                         isSelected = ""
@@ -242,6 +230,8 @@ fun drawerItemColors(): NavigationDrawerItemColors {
         unselectedContainerColor = md_theme_dark_tertiaryContainer,
         selectedContainerColor = md_theme_light_secondaryContainer,
         selectedIconColor = md_theme_dark_tertiaryContainer,
-        unselectedIconColor = md_theme_light_secondaryContainer
+        unselectedIconColor = md_theme_light_secondaryContainer,
+        selectedTextColor = md_theme_dark_tertiaryContainer,
+        unselectedTextColor = md_theme_light_secondaryContainer
     )
 }
