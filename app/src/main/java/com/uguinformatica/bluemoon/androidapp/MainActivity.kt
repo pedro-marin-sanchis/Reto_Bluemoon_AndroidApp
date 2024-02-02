@@ -1,5 +1,6 @@
 package com.uguinformatica.bluemoon.androidapp
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.uguinformatica.bluemoon.androidapp.theme.BlueMoon_aplicationTheme
 import com.uguinformatica.bluemoon.androidapp.ui.screens.LoginScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +26,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginScreen()
+
+                    UserDataScreen()
                 }
             }
         }
