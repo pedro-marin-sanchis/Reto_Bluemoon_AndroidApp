@@ -1,4 +1,4 @@
-package com.uguinformatica.bluemoon.androidapp.ui.components
+package com.uguinformatica.bluemoon.androidapp.ui.components.ProductComponents
 
 import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image

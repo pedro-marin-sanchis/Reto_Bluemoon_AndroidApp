@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.domain.models.Product
-import com.uguinformatica.bluemoon.androidapp.ui.components.ProductListItem
+import com.uguinformatica.bluemoon.androidapp.ui.components.ProductComponents.ProductListItem
 
 
 @Composable
