@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.uguinformatica.bluemoon.androidapp.theme.BlueMoon_aplicationTheme
+import com.uguinformatica.bluemoon.androidapp.ui.screens.ForgotPasswordScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.LoginScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    UserDataScreen()
+                    ForgotPasswordScreen()
                 }
             }
         }
