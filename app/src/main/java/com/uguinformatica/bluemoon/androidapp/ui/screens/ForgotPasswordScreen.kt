@@ -13,13 +13,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.uguinformatica.bluemoon.androidapp.ui.components.ForgotPasswordComponent.ConfirmButton
 import com.uguinformatica.bluemoon.androidapp.ui.components.ForgotPasswordComponent.ConfirmNewPassword
 import com.uguinformatica.bluemoon.androidapp.ui.components.ForgotPasswordComponent.NewPasswordRegisterField
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.HeaderImageLogin
 
 @Composable
-fun ForgotPasswordScreen() {
+fun ForgotPasswordScreen(navHostController: NavHostController) {
     var newpassword by remember { mutableStateOf("") }
     var confirmnewpassword by remember { mutableStateOf("") }
 
@@ -45,10 +46,7 @@ fun ForgotPasswordScreen() {
             }
             Spacer(modifier = Modifier.padding(16.dp))
 
-            ConfirmButton()
-
-
-
+            ConfirmButton(navHostController)
         }
     }
 }

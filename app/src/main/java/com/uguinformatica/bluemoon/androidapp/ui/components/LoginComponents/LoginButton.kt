@@ -10,9 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 
 @Composable
-fun LoginButton() {
+fun LoginButton(navHostController: NavHostController) {
     Box(
         modifier = Modifier
             .width(200.dp)
@@ -20,7 +21,7 @@ fun LoginButton() {
         contentAlignment = Alignment.Center
     ) {
         Button(
-            onClick = { /* Do something! */ },
+            onClick = { navHostController.navigate("ProductScreen") },
             modifier = Modifier
                 .fillMaxSize()
         ) {

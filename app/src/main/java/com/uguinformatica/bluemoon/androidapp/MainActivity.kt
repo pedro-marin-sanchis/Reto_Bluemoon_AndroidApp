@@ -1,17 +1,19 @@
 package com.uguinformatica.bluemoon.androidapp
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CurrencyExchange
@@ -40,27 +42,34 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.uguinformatica.bluemoon.androidapp.theme.BlueMoon_aplicationTheme
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_tertiaryContainer
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondary
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondaryContainer
 import com.uguinformatica.bluemoon.androidapp.ui.screens.CartScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.ForgotPasswordScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.LoginScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.OrderScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 import kotlinx.coroutines.launch
-import com.uguinformatica.bluemoon.androidapp.ui.screens.LoginScreen
-import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
-import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -84,29 +93,82 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyScaffold(
     simulationViewModel: SimulationViewModel,
-    navController: NavController,
+    navController: NavHostController,
     snackbarHostState: SnackbarHostState,
     drawerState: DrawerState,
     cartViewModel: CartViewModel
 ) {
+    var topAppBarState by remember { mutableStateOf(false) }
+    var topAppBarTitle by remember { mutableStateOf("") }
+    var cartButtonState by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { MyTopAppBar(drawerState) }
+        topBar = { if (topAppBarState) MyTopAppBar(drawerState, topAppBarTitle, navController, cartButtonState) }
     ) {
-        //SimulationScreen(it, simulationViewModel)
-        //ProductScreen(it)
-        //OrderScreen(paddingValues = it)
-        CartScreen(it, cartViewModel)
+
+        val paddingValues = it
+
+        NavHost(navController = navController, startDestination = "LoginScreen" ) {
+            composable("LoginScreen") {
+                LoginScreen(navController)
+                topAppBarState = false
+            }
+            composable("RegisterScreen") {
+                RegisterScreen(navController)
+                topAppBarState = false
+            }
+            composable("ForgotPasswordScreen") {
+                ForgotPasswordScreen(navController)
+                topAppBarState = false
+            }
+            composable("UserDataScreen") {
+                UserDataScreen(paddingValues)
+                topAppBarTitle = "User Data"
+                cartButtonState = false
+                topAppBarState = true
+            }
+            composable("SimulationScreen") {
+                SimulationScreen(paddingValues, simulationViewModel)
+                topAppBarTitle = "Simulation"
+                cartButtonState = false
+                topAppBarState = true
+            }
+            composable("ProductScreen") {
+                ProductScreen(paddingValues)
+                topAppBarTitle = "Products"
+                cartButtonState = true
+                topAppBarState = true
+            }
+            composable("OrderScreen") {
+                OrderScreen(paddingValues)
+                topAppBarTitle = "Orders"
+                cartButtonState = false
+                topAppBarState = true
+            }
+            composable("CartScreen") {
+                CartScreen(paddingValues, cartViewModel)
+                topAppBarTitle = "Cart"
+                cartButtonState = false
+                topAppBarState = true
+            }
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBar(drawerState: DrawerState) {
+fun MyTopAppBar(
+    drawerState: DrawerState,
+    topAppBarTitle: String,
+    navHostController: NavHostController,
+    cartButtonState: Boolean
+) {
+
     val scope = rememberCoroutineScope()
 
     TopAppBar(
-        title = { Text(text = "Simulation", color = Color.White) },
+        title = { Text(text = topAppBarTitle, color = Color.White) },
         navigationIcon = {
             IconButton(
                 onClick = {
@@ -124,12 +186,14 @@ fun MyTopAppBar(drawerState: DrawerState) {
             }
         },
         actions = {
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Filled.ShoppingCart,
-                    contentDescription = "Cart",
-                    tint = Color.White
-                )
+            if (cartButtonState) {
+                IconButton(onClick = { navHostController.navigate("CartScreen") }) {
+                    Icon(
+                        imageVector = Icons.Filled.ShoppingCart,
+                        contentDescription = "Cart",
+                        tint = Color.White
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(md_theme_light_secondary)
@@ -139,7 +203,7 @@ fun MyTopAppBar(drawerState: DrawerState) {
 @Composable
 private fun MyModalNavigation(
     drawerValue: DrawerState,
-    navController: NavController,
+    navController: NavHostController,
     simulationViewModel: SimulationViewModel,
     cartViewModel: CartViewModel
 ) {
@@ -167,7 +231,7 @@ private fun MyModalNavigation(
                     selected =  isSelected == "User Data",
                     onClick = {
                         isSelected = "User Data"
-                        navController.navigate("UserData")
+                        navController.navigate("UserDataScreen")
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
@@ -183,7 +247,7 @@ private fun MyModalNavigation(
                     selected = isSelected == "Simulator",
                     onClick = {
                         isSelected = "Simulator"
-                        navController.navigate("SimulatorScreen")
+                        navController.navigate("SimulationScreen")
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
@@ -199,7 +263,7 @@ private fun MyModalNavigation(
                     selected = isSelected == "Products",
                     onClick = {
                         isSelected = "Products"
-                        navController.navigate("ProductsScreen")
+                        navController.navigate("ProductScreen")
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
@@ -215,7 +279,7 @@ private fun MyModalNavigation(
                     selected = isSelected == "Orders",
                     onClick = {
                         isSelected = "Orders"
-                        navController.navigate("OrdersScreen")
+                        navController.navigate("OrderScreen")
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
@@ -239,6 +303,32 @@ private fun MyModalNavigation(
                     },
                     colors = drawerItemColors()
                 )
+                Row(modifier = Modifier
+                    .align(End)
+                    .padding(top = 60.dp)
+                    .clickable {
+                        navController.navigate("LoginScreen")
+                        scope.launch {
+                            drawerState.apply {
+                                if (isOpen) close() else open()
+                            }
+                        }
+                    },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = "LogOut",
+                        color = md_theme_light_secondaryContainer,
+                        modifier = Modifier.padding(end = 15.dp)
+                        )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = "Logout",
+                        tint = md_theme_light_secondaryContainer
+                    )
+
+                }
             }
         }
     ) {

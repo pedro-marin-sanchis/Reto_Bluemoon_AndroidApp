@@ -2,6 +2,7 @@ package com.uguinformatica.bluemoon.androidapp.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,7 +27,7 @@ import com.uguinformatica.bluemoon.androidapp.ui.components.UserDataComponents.S
 import com.uguinformatica.bluemoon.androidapp.ui.components.UserDataComponents.UsernameData
 
 @Composable
-fun UserDataScreen() {
+fun UserDataScreen(paddingValues: PaddingValues) {
     var nameData by remember { mutableStateOf("") }
     var surnameData by remember { mutableStateOf("") }
     var emailData by remember { mutableStateOf("") }
@@ -43,6 +44,7 @@ fun UserDataScreen() {
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(scrollState)
+            .padding(paddingValues)
     ) {
         Column(
             modifier = Modifier
