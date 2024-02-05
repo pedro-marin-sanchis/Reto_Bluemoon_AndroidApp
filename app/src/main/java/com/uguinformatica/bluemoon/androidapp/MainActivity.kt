@@ -50,6 +50,7 @@ import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_tertiaryContai
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondary
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondaryContainer
 import com.uguinformatica.bluemoon.androidapp.ui.screens.CartScreen
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 import kotlinx.coroutines.launch
 
@@ -59,17 +60,29 @@ class MainActivity : ComponentActivity() {
         setContent {
             BlueMoon_aplicationTheme {
                 val simulationViewModel: SimulationViewModel by viewModels()
+                val cartViewModel: CartViewModel by viewModels()
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val navController = rememberNavController()
 
-                MyModalNavigation(drawerValue = drawerState, navController = navController, simulationViewModel)
+                MyModalNavigation(
+                    drawerValue = drawerState,
+                    navController = navController,
+                    simulationViewModel,
+                    cartViewModel
+                )
             }
         }
     }
 }
 
 @Composable
-fun MyScaffold(simulationViewModel: SimulationViewModel, navController: NavController, snackbarHostState: SnackbarHostState, drawerState: DrawerState) {
+fun MyScaffold(
+    simulationViewModel: SimulationViewModel,
+    navController: NavController,
+    snackbarHostState: SnackbarHostState,
+    drawerState: DrawerState,
+    cartViewModel: CartViewModel
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { MyTopAppBar(drawerState) }
@@ -77,7 +90,7 @@ fun MyScaffold(simulationViewModel: SimulationViewModel, navController: NavContr
         //SimulationScreen(it, simulationViewModel)
         //ProductScreen(it)
         //OrderScreen(paddingValues = it)
-        CartScreen(paddingValues = it)
+        CartScreen(it, cartViewModel)
     }
 }
 
@@ -118,7 +131,12 @@ fun MyTopAppBar(drawerState: DrawerState) {
 }
 
 @Composable
-private fun MyModalNavigation(drawerValue: DrawerState, navController: NavController, simulationViewModel: SimulationViewModel) {
+private fun MyModalNavigation(
+    drawerValue: DrawerState,
+    navController: NavController,
+    simulationViewModel: SimulationViewModel,
+    cartViewModel: CartViewModel
+) {
     val drawerState = drawerValue
     val snackbarHostState = remember { SnackbarHostState() }
     var isSelected by remember { mutableStateOf("User Data") }
@@ -218,7 +236,13 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
             }
         }
     ) {
-        MyScaffold(simulationViewModel, navController, snackbarHostState, drawerState )
+        MyScaffold(
+            simulationViewModel,
+            navController,
+            snackbarHostState,
+            drawerState,
+            cartViewModel
+        )
     }
 }
 
