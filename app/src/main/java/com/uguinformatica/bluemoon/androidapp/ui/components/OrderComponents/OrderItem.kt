@@ -70,6 +70,5 @@ fun OrderItem(order: Order) {
                 }
             }
         }
-
     }
 }

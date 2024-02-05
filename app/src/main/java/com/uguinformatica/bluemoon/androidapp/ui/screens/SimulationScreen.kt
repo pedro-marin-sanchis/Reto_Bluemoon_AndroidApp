@@ -45,7 +45,7 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
 
     when {
         openAlertDialog -> {
-            AlertDialogExample(
+            AlertDialogConfirm(
                 onDismissRequest = { simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
                 onConfirmation = {
                     simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
@@ -119,7 +119,7 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
 }
 
 @Composable
-fun AlertDialogExample(
+private fun AlertDialogConfirm(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     dialogTitle: String,
@@ -155,7 +155,7 @@ fun AlertDialogExample(
 }
 
 @Composable
-fun AddItemDialog(
+private fun AddItemDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     simulationViewModel: SimulationViewModel

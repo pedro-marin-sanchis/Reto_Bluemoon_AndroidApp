@@ -28,7 +28,7 @@ fun ProductScreen(paddingValues: PaddingValues) {
     )
 }
 
-fun getProducts(): List<Product> {
+private fun getProducts(): List<Product> {
     return listOf(
         Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
         Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
