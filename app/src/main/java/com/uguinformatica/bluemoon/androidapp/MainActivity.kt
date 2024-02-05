@@ -12,14 +12,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.House
+import androidx.compose.material.icons.filled.Shop
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -60,6 +63,7 @@ import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_primaryContai
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondary
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondaryContainer
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_tertiary
+import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 import kotlinx.coroutines.launch
@@ -83,13 +87,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MyScaffold(simulationViewModel: SimulationViewModel, navController: NavController, snackbarHostState: SnackbarHostState, drawerState: DrawerState) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { MyTopAppBar(drawerState) }
     ) {
-        SimulationScreen(it, simulationViewModel)
+        //SimulationScreen(it, simulationViewModel)
+        ProductScreen(it)
     }
 }
 
@@ -145,10 +151,11 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                 Image(
                     painter = painterResource(id = R.drawable.slogan_blue_moon),
                     contentDescription = "",
-                    modifier = Modifier.size(400.dp,300.dp),
+                    modifier = Modifier.size(400.dp,250.dp),
                     contentScale = ContentScale.FillBounds)
                 Spacer(modifier = Modifier.size(0.dp,10.dp))
                 NavigationDrawerItem(
+                    modifier = Modifier.padding(10.dp),
                     icon = { Icon(imageVector = Icons.Default.House, contentDescription = "UserData") },
                     label = { Text(text = "User Data", color = Color.White) },
                     selected =  isSelected == "User Data",
@@ -164,12 +171,13 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                     colors = drawerItemColors()
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Default.CurrencyExchange, contentDescription = "Stats") },
+                    modifier = Modifier.padding(10.dp),
+                    icon = { Icon(imageVector = Icons.Default.CurrencyExchange, contentDescription = "Simulation") },
                     label = { Text(text = "Simulator", color = Color.White) },
                     selected = isSelected == "Simulator",
                     onClick = {
                         isSelected = "Simulator"
-                        navController.navigate("Simulator")
+                        navController.navigate("SimulatorScreen")
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
@@ -179,12 +187,13 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                     colors = drawerItemColors()
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Default.CreditCard, contentDescription = "Calculate") },
+                    modifier = Modifier.padding(10.dp),
+                    icon = { Icon(imageVector = Icons.Default.Shop, contentDescription = "Products") },
                     label = { Text(text = "Products", color = Color.White) },
                     selected = isSelected == "Products",
                     onClick = {
                         isSelected = "Products"
-                        navController.navigate("Products")
+                        navController.navigate("ProductsScreen")
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
@@ -194,13 +203,13 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                     colors = drawerItemColors()
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = "Log Out") },
+                    modifier = Modifier.padding(10.dp),
+                    icon = { Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "Orders") },
                     label = { Text(text = "Orders", color = Color.White) },
                     selected = isSelected == "Orders",
-                    modifier = Modifier.align(End),
                     onClick = {
                         isSelected = "Orders"
-                        navController.navigate("Orders")
+                        navController.navigate("OrdersScreen")
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
@@ -210,10 +219,10 @@ private fun MyModalNavigation(drawerValue: DrawerState, navController: NavContro
                     colors = drawerItemColors()
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Default.Close, contentDescription = "Log Out") },
+                    modifier = Modifier.padding(10.dp),
+                    icon = { Icon(imageVector = Icons.Default.Close, contentDescription = "Close") },
                     label = { Text(text = "Close", color = Color.White) },
                     selected = isSelected == "Close",
-                    modifier = Modifier.align(End),
                     onClick = {
                         isSelected = ""
                         scope.launch {
