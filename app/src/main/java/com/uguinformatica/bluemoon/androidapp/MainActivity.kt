@@ -1,6 +1,7 @@
 package com.uguinformatica.bluemoon.androidapp
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.activity.ComponentActivity
@@ -62,6 +63,9 @@ import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_tertiary
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 import kotlinx.coroutines.launch
+import com.uguinformatica.bluemoon.androidapp.ui.screens.LoginScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

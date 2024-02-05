@@ -79,6 +79,8 @@ dependencies {
 
     ksp("com.google.dagger:hilt-compiler:$hiltVersion")
 
+    implementation("androidx.compose.material:material-icons-extended:1.6.0")
+
 
 
     testImplementation("junit:junit:4.13.2")
