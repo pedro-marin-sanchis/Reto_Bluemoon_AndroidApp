@@ -22,6 +22,7 @@ import com.uguinformatica.bluemoon.androidapp.theme.BlueMoon_aplicationTheme
 import kotlinx.coroutines.launch
 
 
+
 class MainActivity : ComponentActivity() {
 
     @SuppressLint("CoroutineCreationDuringComposition")
@@ -34,25 +35,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    Text(text = "Hello, BlueMoon!")
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BlueMoon_aplicationTheme {
-        Greeting("Android")
     }
 }
