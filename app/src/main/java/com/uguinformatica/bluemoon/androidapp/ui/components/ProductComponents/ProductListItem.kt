@@ -1,6 +1,7 @@
 package com.uguinformatica.bluemoon.androidapp.ui.components.ProductComponents
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -16,12 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.uguinformatica.bluemoon.androidapp.domain.models.Product
 
 @Composable
-fun ProductListItem(product: Product) {
+fun ProductListItem(product: Product, navHostController: NavHostController) {
     Card(
-        modifier = Modifier.padding(10.dp)
+        modifier = Modifier
+            .padding(10.dp)
+            .clickable { navHostController.navigate(
+                "ProductDetailScreen/${product.image}/${product.name}/${product.description}/${product.price}"
+            ) }
     ) {
         Image(
             painter = painterResource(id = product.image),
@@ -30,11 +36,6 @@ fun ProductListItem(product: Product) {
 
         Text(
             text = product.name,
-            fontSize = 25.sp,
-        )
-
-        Text(
-            text = product.description,
             fontSize = 25.sp,
         )
 

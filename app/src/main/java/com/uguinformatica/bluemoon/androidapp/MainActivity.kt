@@ -1,5 +1,6 @@
 package com.uguinformatica.bluemoon.androidapp
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -50,9 +51,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.uguinformatica.bluemoon.androidapp.theme.BlueMoon_aplicationTheme
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_tertiaryContainer
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondary
@@ -61,14 +64,19 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.CartScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.ForgotPasswordScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.LoginScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.OrderScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductDetailScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.launch
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,7 +143,7 @@ fun MyScaffold(
                 topAppBarState = true
             }
             composable("ProductScreen") {
-                ProductScreen(paddingValues)
+                ProductScreen(paddingValues, navController)
                 topAppBarTitle = "Products"
                 cartButtonState = true
                 topAppBarState = true
@@ -151,6 +159,22 @@ fun MyScaffold(
                 topAppBarTitle = "Cart"
                 cartButtonState = false
                 topAppBarState = true
+            }
+            composable("ProductDetailScreen/{image}/{name}/{description}/{price}",
+                arguments = listOf(
+                    navArgument("image") {type = NavType.IntType},
+                    navArgument("name") {type = NavType.StringType},
+                    navArgument("description") {type = NavType.StringType},
+                    navArgument("price") {type = NavType.FloatType}
+                )
+            ){
+                val param1 = it.arguments?.getInt("image") ?: 0
+                val param2 = it.arguments?.getString("name") ?: ""
+                val param3 = it.arguments?.getString("description") ?: ""
+                val param4 = it.arguments?.getFloat("price") ?: 0f
+                ProductDetailScreen(param1,param2,param3,param4,paddingValues,navController)
+                topAppBarTitle = "Product Detail"
+                cartButtonState = true
             }
         }
     }
