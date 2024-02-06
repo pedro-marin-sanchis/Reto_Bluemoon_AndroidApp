@@ -25,9 +25,10 @@ import com.uguinformatica.bluemoon.androidapp.ui.components.UserDataComponents.N
 import com.uguinformatica.bluemoon.androidapp.ui.components.UserDataComponents.PasswordRegisterData
 import com.uguinformatica.bluemoon.androidapp.ui.components.UserDataComponents.SurnameData
 import com.uguinformatica.bluemoon.androidapp.ui.components.UserDataComponents.UsernameData
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.UserDataViewModel
 
 @Composable
-fun UserDataScreen(paddingValues: PaddingValues) {
+fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataViewModel) {
     var nameData by remember { mutableStateOf("") }
     var surnameData by remember { mutableStateOf("") }
     var emailData by remember { mutableStateOf("") }

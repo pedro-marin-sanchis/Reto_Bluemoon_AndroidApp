@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -67,6 +68,7 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.UserDataViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -76,6 +78,7 @@ class MainActivity : ComponentActivity() {
             BlueMoon_aplicationTheme {
                 val simulationViewModel: SimulationViewModel by viewModels()
                 val cartViewModel: CartViewModel by viewModels()
+                val userViewModel: UserDataViewModel by viewModels()
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val navController = rememberNavController()
 
@@ -83,7 +86,8 @@ class MainActivity : ComponentActivity() {
                     drawerValue = drawerState,
                     navController = navController,
                     simulationViewModel,
-                    cartViewModel
+                    cartViewModel,
+                    userViewModel
                 )
             }
         }
@@ -96,7 +100,8 @@ fun MyScaffold(
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
     drawerState: DrawerState,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    userDataViewModel: UserDataViewModel
 ) {
     var topAppBarState by remember { mutableStateOf(false) }
     var topAppBarTitle by remember { mutableStateOf("") }
@@ -123,7 +128,7 @@ fun MyScaffold(
                 topAppBarState = false
             }
             composable("UserDataScreen") {
-                UserDataScreen(paddingValues)
+                UserDataScreen(paddingValues, userDataViewModel)
                 topAppBarTitle = "User Data"
                 cartButtonState = false
                 topAppBarState = true
@@ -156,60 +161,17 @@ fun MyScaffold(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MyTopAppBar(
-    drawerState: DrawerState,
-    topAppBarTitle: String,
-    navHostController: NavHostController,
-    cartButtonState: Boolean
-) {
-
-    val scope = rememberCoroutineScope()
-
-    TopAppBar(
-        title = { Text(text = topAppBarTitle, color = Color.White) },
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    scope.launch {
-                        drawerState.apply {
-                            if (isClosed) open() else close()
-                        }
-                    }
-                }
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.bluemoonlogo),
-                    contentDescription = "Cart",
-                    modifier = Modifier.size(50.dp))
-            }
-        },
-        actions = {
-            if (cartButtonState) {
-                IconButton(onClick = { navHostController.navigate("CartScreen") }) {
-                    Icon(
-                        imageVector = Icons.Filled.ShoppingCart,
-                        contentDescription = "Cart",
-                        tint = Color.White
-                    )
-                }
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(md_theme_light_secondary)
-    )
-}
-
 @Composable
 private fun MyModalNavigation(
     drawerValue: DrawerState,
     navController: NavHostController,
     simulationViewModel: SimulationViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    userDataViewModel: UserDataViewModel
 ) {
     val drawerState = drawerValue
     val snackbarHostState = remember { SnackbarHostState() }
-    var isSelected by remember { mutableStateOf("User Data") }
+    var isSelected by remember { mutableStateOf("Products") }
     val scope = rememberCoroutineScope()
 
 
@@ -321,7 +283,7 @@ private fun MyModalNavigation(
                         text = "LogOut",
                         color = md_theme_light_secondaryContainer,
                         modifier = Modifier.padding(end = 15.dp)
-                        )
+                    )
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Logout,
                         contentDescription = "Logout",
@@ -337,9 +299,54 @@ private fun MyModalNavigation(
             navController,
             snackbarHostState,
             drawerState,
-            cartViewModel
+            cartViewModel,
+            userDataViewModel
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyTopAppBar(
+    drawerState: DrawerState,
+    topAppBarTitle: String,
+    navHostController: NavHostController,
+    cartButtonState: Boolean
+) {
+
+    val scope = rememberCoroutineScope()
+
+    TopAppBar(
+        title = { Text(text = topAppBarTitle, color = Color.White) },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    scope.launch {
+                        drawerState.apply {
+                            if (isClosed) open() else close()
+                        }
+                    }
+                }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.bluemoonlogo),
+                    contentDescription = "Cart",
+                    modifier = Modifier.size(50.dp))
+            }
+        },
+        actions = {
+            if (cartButtonState) {
+                IconButton(onClick = { navHostController.navigate("CartScreen") }) {
+                    Icon(
+                        imageVector = Icons.Filled.ShoppingCart,
+                        contentDescription = "Cart",
+                        tint = Color.White
+                    )
+                }
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(md_theme_light_secondary)
+    )
 }
 
 @Composable
