@@ -9,8 +9,7 @@ object BlueMoonApi {
         .setLenient()
         .create()
 
-    val retrofit = Retrofit.Builder().baseUrl("http://192.168.1.169:8080/api/")
-
+    val retrofit = Retrofit.Builder().baseUrl("http://192.168.103.2:8080/api/")
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
