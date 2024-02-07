@@ -3,7 +3,9 @@ package com.uguinformatica.bluemoon.androidapp.ui.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 
+@HiltViewModel
 class SimulationViewModel : ViewModel() {
 
     private var _weight = MutableLiveData("")

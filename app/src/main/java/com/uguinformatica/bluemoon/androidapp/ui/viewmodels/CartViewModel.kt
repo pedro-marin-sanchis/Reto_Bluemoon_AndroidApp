@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.uguinformatica.bluemoon.androidapp.domain.models.CartItem
+import dagger.hilt.android.lifecycle.HiltViewModel
 
+@HiltViewModel
 class CartViewModel : ViewModel() {
 
     private var _cartItemsList = MutableLiveData(listOf<CartItem>())
