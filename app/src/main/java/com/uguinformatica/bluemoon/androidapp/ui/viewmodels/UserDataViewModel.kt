@@ -6,7 +6,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 
+//@HiltViewModel
 class UserDataViewModel : ViewModel() {
 
     private var _name = MutableLiveData("")
@@ -28,6 +30,7 @@ class UserDataViewModel : ViewModel() {
     val confirmPassword: LiveData<String> = _confirmPassword
     val address: LiveData<String> = _address
     val modify: LiveData<Boolean> = _modify
+    val emailOK: LiveData<Boolean> = _emailOK
     val showPassword: LiveData<Boolean> = _showPassword
 
     private fun disableModify() {
@@ -38,14 +41,33 @@ class UserDataViewModel : ViewModel() {
         return _password.value == _confirmPassword.value
     }
 
+    private fun checkName(): Boolean {
+        return _name.value != ""
+    }
+
+    private fun checkSurname(): Boolean {
+        return _surname.value != ""
+    }
+
+    private fun checkUsername(): Boolean {
+        return _username.value != ""
+    }
+
+    private fun checkAddress(): Boolean {
+        return _address.value != ""
+    }
+
+    private fun checkEmailOk(): Boolean {
+        return _emailOK.value == true
+    }
+
     fun checkEmail(email: String) {
         _emailOK.value = Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     fun checkFields() {
-        if (_name.value != "" && _surname.value != "" &&
-            _username.value != "" && _emailOK.value == true &&
-            arePasswordEquals() && _address.value != "")
+        if (checkName() && checkSurname() && checkUsername() &&
+            checkEmailOk() && arePasswordEquals() && checkAddress())
         {
             disableModify()
         }

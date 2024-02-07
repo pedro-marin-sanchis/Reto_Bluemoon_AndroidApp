@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.uguinformatica.bluemoon.androidapp.domain.models.Order
 import dagger.hilt.android.lifecycle.HiltViewModel
 
-@HiltViewModel
+//@HiltViewModel
 class OrderViewModel : ViewModel() {
 
     private var _ordersList = MutableLiveData(listOf<Order>())

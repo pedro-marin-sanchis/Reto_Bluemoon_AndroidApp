@@ -6,9 +6,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 
-@HiltViewModel
+//@HiltViewModel
 class RegisterViewModel : ViewModel() {
 
     private var _name = MutableLiveData("")
@@ -29,7 +28,7 @@ class RegisterViewModel : ViewModel() {
     val password: LiveData<String> = _password
     val confirmPassword: LiveData<String> = _confirmPassword
     val address: LiveData<String> = _address
-    val modify: LiveData<Boolean> = _modify
+    val isRegisterEnabled: LiveData<Boolean> = _modify
     val emailOK: LiveData<Boolean> = _emailOK
     val showPassword: LiveData<Boolean> = _showPassword
 
@@ -90,34 +89,34 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun setName(name: String) {
-        _name.value = name
+        _name.postValue(name)
     }
 
     fun setSurname(surname: String) {
-        _surname.value = surname
+        _surname.postValue(surname)
     }
 
     fun setEmail(email: String) {
-        _email.value = email
+        _email.postValue(email)
     }
 
     fun setUsername(username: String) {
-        _username.value = username
+        _username.postValue(username)
     }
 
     fun setPassword(password: String) {
-        _password.value = password
+        _password.postValue(password)
     }
 
     fun setConfirmPassword(confirmPassword: String) {
-        _confirmPassword.value = confirmPassword
+        _confirmPassword.postValue(confirmPassword)
     }
 
     fun setAddress(address: String) {
-        _address.value = address
+        _address.postValue(address)
     }
 
-    fun enableModify() {
-        _modify.value = true
+    fun enableRegister() {
+        _modify.postValue(true)
     }
 }

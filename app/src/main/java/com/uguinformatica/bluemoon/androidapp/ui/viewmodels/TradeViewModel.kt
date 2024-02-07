@@ -7,7 +7,7 @@ import com.uguinformatica.bluemoon.androidapp.domain.models.Trade
 import com.uguinformatica.bluemoon.androidapp.domain.models.Tradeable
 import dagger.hilt.android.lifecycle.HiltViewModel
 
-@HiltViewModel
+//@HiltViewModel
 class TradeViewModel : ViewModel() {
 
     private var _tradesList = MutableLiveData(listOf<Trade>())

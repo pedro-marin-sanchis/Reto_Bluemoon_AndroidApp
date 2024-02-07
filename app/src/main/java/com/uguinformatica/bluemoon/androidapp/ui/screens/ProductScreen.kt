@@ -11,12 +11,14 @@ import androidx.navigation.NavHostController
 import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.domain.models.Product
 import com.uguinformatica.bluemoon.androidapp.ui.components.ProductComponents.ProductListItem
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ProductViewModel
 
 
 @Composable
 fun ProductScreen(
     paddingValues: PaddingValues,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    productViewModel: ProductViewModel
 ) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),

@@ -21,7 +21,6 @@ fun ForgotPassword(modifier: Modifier = Modifier, navHostController: NavHostCont
             modifier = Modifier.clickable { navHostController.navigate("ForgotPasswordScreen") },
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1834CE)
         )
     }
 }

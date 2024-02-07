@@ -18,9 +18,10 @@ import com.uguinformatica.bluemoon.androidapp.ui.components.ForgotPasswordCompon
 import com.uguinformatica.bluemoon.androidapp.ui.components.ForgotPasswordComponent.ConfirmNewPassword
 import com.uguinformatica.bluemoon.androidapp.ui.components.ForgotPasswordComponent.NewPasswordRegisterField
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.HeaderImageLogin
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ForgotPasswordViewModel
 
 @Composable
-fun ForgotPasswordScreen(navHostController: NavHostController) {
+fun ForgotPasswordScreen(navHostController: NavHostController, forgotPasswordViewModel: ForgotPasswordViewModel) {
     var newpassword by remember { mutableStateOf("") }
     var confirmnewpassword by remember { mutableStateOf("") }
 

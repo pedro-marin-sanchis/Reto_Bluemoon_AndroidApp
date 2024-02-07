@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 
-@HiltViewModel
+//@HiltViewModel
 class ForgotPasswordViewModel : ViewModel() {
 
     private var _password = MutableLiveData("")
@@ -55,10 +55,10 @@ class ForgotPasswordViewModel : ViewModel() {
     }
 
     fun setPassword(password: String) {
-        _password.value = password
+        _password.postValue(password)
     }
 
     fun setConfirmPassword(confirmPassword: String) {
-        _confirmPassword.value = confirmPassword
+        _confirmPassword.postValue(confirmPassword)
     }
 }

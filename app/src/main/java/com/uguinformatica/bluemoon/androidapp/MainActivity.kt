@@ -70,8 +70,13 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ForgotPasswordViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.LoginViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.OrderViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ProductViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.RegisterViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.TradeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.UserDataViewModel
 import kotlinx.coroutines.launch
@@ -83,10 +88,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BlueMoon_aplicationTheme {
-                val simulationViewModel: SimulationViewModel by viewModels()
                 val cartViewModel: CartViewModel by viewModels()
+                val simulationViewModel: SimulationViewModel by viewModels()
                 val userViewModel: UserDataViewModel by viewModels()
                 val loginViewModel: LoginViewModel by viewModels()
+                val orderViewModel: OrderViewModel by viewModels()
+                val registerViewModel: RegisterViewModel by viewModels()
+                val tradeViewModel: TradeViewModel by viewModels()
+                val forgotPasswordViewModel: ForgotPasswordViewModel by viewModels()
+                val productViewModel: ProductViewModel by viewModels()
 
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val navController = rememberNavController()
@@ -97,7 +107,12 @@ class MainActivity : ComponentActivity() {
                     simulationViewModel,
                     cartViewModel,
                     userViewModel,
-                    loginViewModel
+                    loginViewModel,
+                    orderViewModel,
+                    registerViewModel,
+                    tradeViewModel,
+                    forgotPasswordViewModel,
+                    productViewModel
                 )
             }
         }
@@ -112,7 +127,12 @@ fun MainScaffold(
     drawerState: DrawerState,
     cartViewModel: CartViewModel,
     userDataViewModel: UserDataViewModel,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    orderViewModel: OrderViewModel,
+    registerViewModel: RegisterViewModel,
+    tradeViewModel: TradeViewModel,
+    forgotPasswordViewModel: ForgotPasswordViewModel,
+    productViewModel: ProductViewModel
 ) {
     var topAppBarState by remember { mutableStateOf(false) }
     var topAppBarTitle by remember { mutableStateOf("") }
@@ -131,11 +151,11 @@ fun MainScaffold(
                 topAppBarState = false
             }
             composable("RegisterScreen") {
-                RegisterScreen(navController)
+                RegisterScreen(navController, registerViewModel)
                 topAppBarState = false
             }
             composable("ForgotPasswordScreen") {
-                ForgotPasswordScreen(navController)
+                ForgotPasswordScreen(navController, forgotPasswordViewModel)
                 topAppBarState = false
             }
             composable("UserDataScreen") {
@@ -151,13 +171,13 @@ fun MainScaffold(
                 topAppBarState = true
             }
             composable("ProductScreen") {
-                ProductScreen(paddingValues, navController)
+                ProductScreen(paddingValues, navController, productViewModel)
                 topAppBarTitle = "Products"
                 cartButtonState = true
                 topAppBarState = true
             }
             composable("OrderScreen") {
-                OrderScreen(paddingValues)
+                OrderScreen(paddingValues, orderViewModel)
                 topAppBarTitle = "Orders"
                 cartButtonState = false
                 topAppBarState = true
@@ -239,16 +259,19 @@ private fun ModalNavigation(
     simulationViewModel: SimulationViewModel,
     cartViewModel: CartViewModel,
     userDataViewModel: UserDataViewModel,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    orderViewModel: OrderViewModel,
+    registerViewModel: RegisterViewModel,
+    tradeViewModel: TradeViewModel,
+    forgotPasswordViewModel: ForgotPasswordViewModel,
+    productViewModel: ProductViewModel
 ) {
     val drawerState = drawerValue
     val snackbarHostState = remember { SnackbarHostState() }
     var isSelected by remember { mutableStateOf("Products") }
     val scope = rememberCoroutineScope()
 
-
     ModalNavigationDrawer(
-        gesturesEnabled = false,
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(drawerContainerColor = md_theme_light_secondary) {
@@ -373,7 +396,12 @@ private fun ModalNavigation(
             drawerState,
             cartViewModel,
             userDataViewModel,
-            loginViewModel
+            loginViewModel,
+            orderViewModel,
+            registerViewModel,
+            tradeViewModel,
+            forgotPasswordViewModel,
+            productViewModel
         )
     }
 }

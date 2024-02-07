@@ -11,9 +11,10 @@ import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.domain.models.Order
 import com.uguinformatica.bluemoon.androidapp.domain.models.Product
 import com.uguinformatica.bluemoon.androidapp.ui.components.OrderComponents.OrderItem
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.OrderViewModel
 
 @Composable
-fun OrderScreen(paddingValues: PaddingValues) {
+fun OrderScreen(paddingValues: PaddingValues, orderViewModel: OrderViewModel) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(1),
         content = {

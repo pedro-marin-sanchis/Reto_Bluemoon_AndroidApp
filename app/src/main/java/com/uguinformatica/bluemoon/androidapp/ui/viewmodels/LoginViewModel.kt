@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 
-@HiltViewModel
+//@HiltViewModel
 class LoginViewModel : ViewModel() {
 
     private var _username = MutableLiveData("")
@@ -51,10 +51,10 @@ class LoginViewModel : ViewModel() {
     }
 
     fun setUsername(username: String) {
-        _username.value = username
+        _username.postValue(username)
     }
 
     fun setPassword(password: String) {
-        _password.value = password
+        _password.postValue(password)
     }
 }
