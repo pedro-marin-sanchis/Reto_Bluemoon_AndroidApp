@@ -7,7 +7,6 @@ import com.uguinformatica.bluemoon.androidapp.domain.models.CartItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.lifecycle.viewModelScope
 import com.uguinformatica.bluemoon.androidapp.domain.usecase.LoginUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

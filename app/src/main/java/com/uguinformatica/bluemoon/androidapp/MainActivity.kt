@@ -292,7 +292,7 @@ private fun ModalNavigation(
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
                     icon = { Icon(imageVector = Icons.Default.House, contentDescription = "UserData") },
-                    label = { Text(text = "User Data") },
+                    label = { Text(text = "User Data | Balance: 500$") },
                     selected =  isSelected == "User Data",
                     onClick = {
                         isSelected = "User Data"
