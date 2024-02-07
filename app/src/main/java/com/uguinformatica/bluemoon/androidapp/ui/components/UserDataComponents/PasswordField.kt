@@ -38,7 +38,12 @@ fun PasswordVisibleIconRegister(passwordIsVisible: Boolean, onToggleVisibility: 
 }
 
 @Composable
-fun PasswordRegisterData(passwordState: String, onTextFieldChanged: (String) -> Unit, enabled: Boolean) {
+fun PasswordField(
+    passwordState: String,
+    onTextFieldChanged: (String) -> Unit,
+    enabled: Boolean,
+    placeholder: @Composable () -> Unit
+) {
     var passwordIsVisible by rememberSaveable { mutableStateOf(false) }
     val visualTransformation = if (passwordIsVisible) {
         VisualTransformation.None
@@ -50,7 +55,7 @@ fun PasswordRegisterData(passwordState: String, onTextFieldChanged: (String) -> 
         enabled = enabled,
         value = passwordState,
         onValueChange = { onTextFieldChanged(it) },
-        placeholder = { Text(text = "Password") },
+        placeholder = placeholder,
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,

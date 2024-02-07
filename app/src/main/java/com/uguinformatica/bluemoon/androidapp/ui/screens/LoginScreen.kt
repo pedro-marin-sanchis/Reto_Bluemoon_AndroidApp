@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,8 +25,14 @@ import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.LoginViewModel
 
 @Composable
 fun LoginScreen(navHostController: NavHostController, loginViewModel: LoginViewModel) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val username by loginViewModel.username.observeAsState("")
+    val password by loginViewModel.password.observeAsState("")
+
+    val isLoged by loginViewModel.isLoged.observeAsState(false)
+
+    if (isLoged) {
+        navHostController.navigate("ProductScreen")
+    }
 
     Box(
         modifier = Modifier
@@ -39,14 +46,14 @@ fun LoginScreen(navHostController: NavHostController, loginViewModel: LoginViewM
         ) {
             HeaderImageLogin(Modifier.align(Alignment.CenterHorizontally))
             Spacer(modifier = Modifier.padding(16.dp))
-            UserField(username) { newUsername -> username = newUsername }
+            UserField(username) { newUsername -> loginViewModel.setUsername(newUsername) }
             Spacer(modifier = Modifier.padding(16.dp))
             PasswordField(password) { newPassword ->
-                password = newPassword
+                loginViewModel.setPassword(newPassword)
             }
             Spacer(modifier = Modifier.padding(16.dp))
 
-            LoginButton(navHostController)
+            LoginButton(loginViewModel)
             NotAccount(Modifier,navHostController)
 
             Spacer(modifier = Modifier.padding(16.dp))

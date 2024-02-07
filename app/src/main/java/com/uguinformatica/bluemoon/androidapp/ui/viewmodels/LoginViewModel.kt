@@ -5,22 +5,36 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.uguinformatica.bluemoon.androidapp.domain.models.UserLogin
+import com.uguinformatica.bluemoon.androidapp.domain.repositories.ILoginRepository
+import com.uguinformatica.bluemoon.androidapp.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-//@HiltViewModel
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    val loginUseCase: LoginUseCase
+) : ViewModel() {
 
     private var _username = MutableLiveData("")
     private var _password = MutableLiveData("")
     private var _showPassword = MutableLiveData(false)
-    private var _loginOK = MutableLiveData(false)
+    private var _isLoged = MutableLiveData(false)
 
     val username: LiveData<String> = _username
     val password: LiveData<String> = _password
     val showPassword: LiveData<Boolean> = _showPassword
-    val loginOK: LiveData<Boolean> = _loginOK
+    val isLoged: LiveData<Boolean> = _isLoged
 
-    fun changeHideNonePassword(none: VisualTransformation, hide: VisualTransformation): VisualTransformation {
+    fun changeHideNonePassword(
+        none: VisualTransformation,
+        hide: VisualTransformation
+    ): VisualTransformation {
         return if (_showPassword.value == true) {
             none
         } else {
@@ -36,18 +50,40 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun checkFields() {
-        if (checkUsername() && checkPassword()) {
-            _loginOK.value = true
+    fun checkFields(): Boolean {
+        return checkUsername() && checkPassword()
+    }
+
+    fun login() {
+
+        if (!checkFields()) {
+            return
+        }
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+
+                val loginData = UserLogin(_username.value!!, _password.value!!)
+
+                try {
+                    println("Trying to login")
+                    loginUseCase.login(loginData)
+                    println("Loged")
+                    _isLoged.postValue(true)
+                } catch (e: Exception) {
+                    println("Not Loged")
+                    _isLoged.postValue(false)
+                }
+            }
         }
     }
 
     private fun checkUsername(): Boolean {
-        return _username.value != ""
+        return _username.value != "" || _username.value != null
     }
 
     private fun checkPassword(): Boolean {
-        return _password.value != ""
+        return _password.value != "" || _password.value != null
     }
 
     fun setUsername(username: String) {

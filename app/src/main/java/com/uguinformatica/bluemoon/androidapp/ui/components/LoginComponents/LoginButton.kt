@@ -7,13 +7,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.asLiveData
 import androidx.navigation.NavHostController
+import com.uguinformatica.bluemoon.androidapp.dataStore
+import com.uguinformatica.bluemoon.androidapp.domain.usecase.LoginUseCase
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.LoginViewModel
+import kotlinx.coroutines.flow.map
 
 @Composable
-fun LoginButton(navHostController: NavHostController) {
+fun LoginButton(loginViewModel: LoginViewModel) {
     Box(
         modifier = Modifier
             .width(200.dp)
@@ -21,7 +30,7 @@ fun LoginButton(navHostController: NavHostController) {
         contentAlignment = Alignment.Center
     ) {
         Button(
-            onClick = { navHostController.navigate("ProductScreen") },
+            onClick = { loginViewModel.login() },
             modifier = Modifier
                 .fillMaxSize()
         ) {
