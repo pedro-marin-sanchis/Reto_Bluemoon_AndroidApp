@@ -32,60 +32,60 @@ interface BlueMoonApiService {
     // --- User ---
 
     @GET("users/me")
-    suspend fun getUser(@Header("Authorization") token: String): Response<UserDTO>
+    suspend fun getUser(): Response<UserDTO>
 
     @PUT("users/me")
-    suspend fun updateUser(@Header("Authorization") token: String, @Body user: UserDTO): Response<UserDTO>
+    suspend fun updateUser( @Body user: UserDTO): Response<UserDTO>
 
     @PUT("users/me/password")
-    suspend fun updatePassword(@Header("Authorization") token: String, @Body password: PasswordDTO): Response<Unit>
+    suspend fun updatePassword( @Body password: PasswordDTO): Response<Unit>
 
     // --- Cart ---
 
     @GET("users/me/cart-items")
-    suspend fun getCartItems(@Header("Authorization") token: String): Response<List<CartItemDTO>>
+    suspend fun getCartItems(): Response<List<CartItemDTO>>
 
     @GET("users/me/cart-items/{id}")
-    suspend fun getCartItem(@Header("Authorization") token: String,  @Path("id") productId: Long): Response<CartItemDTO>
+    suspend fun getCartItem(  @Path("id") productId: Long): Response<CartItemDTO>
 
     @POST("users/me/cart-items")
-    suspend fun addCartItem(@Header("Authorization") token: String, @Body cartItem: AddCartItemDTO): Response<CartItemDTO>
+    suspend fun addCartItem( @Body cartItem: AddCartItemDTO): Response<CartItemDTO>
 
     @PUT("users/me/cart-items/{id}")
-    suspend fun updateCartItem(@Header("Authorization") token: String,  @Body cartItem: UpdateCartItemDTO, @Path("id") productId: Long): Response<CartItemDTO>
+    suspend fun updateCartItem(  @Body cartItem: UpdateCartItemDTO, @Path("id") productId: Long): Response<CartItemDTO>
 
     @DELETE("users/me/cart-items/{id}")
-    suspend fun deleteCartItem(@Header("Authorization") token: String, @Path("id") productId: Long): Response<Unit>
+    suspend fun deleteCartItem( @Path("id") productId: Long): Response<Unit>
 
     // --- Orders ---
 
     @GET("users/me/orders")
-    suspend fun getOrders(@Header("Authorization") token: String): Response<List<OrderDTO>>
+    suspend fun getOrders(): Response<List<OrderDTO>>
 
     @GET("users/me/orders/{id}")
-    suspend fun getOrder(@Header("Authorization") token: String, @Path("id") orderId: Long): Response<OrderDTO>
+    suspend fun getOrder( @Path("id") orderId: Long): Response<OrderDTO>
 
     @POST("orders")
-    suspend fun addOrder(@Header("Authorization") token: String, @Body createOrder: CreateOrderDTO): Response<OrderDTO>
+    suspend fun addOrder( @Body createOrder: CreateOrderDTO): Response<OrderDTO>
 
     // --- Trades ---
     @GET("users/me/trades")
-    suspend fun getTrades(@Header("Authorization") token: String): Response<List<TradeDTO>>
+    suspend fun getTrades(): Response<List<TradeDTO>>
 
     @GET("users/me/trades/{id}")
-    suspend fun getTrade(@Header("Authorization") token: String, @Path("id") tradeId: Long): Response<TradeDTO>
+    suspend fun getTrade( @Path("id") tradeId: Long): Response<TradeDTO>
 
     @POST("trades")
-    suspend fun addTrade(@Header("Authorization") token: String, @Body trade: CreateTradeDTO): Response<TradeDTO>
+    suspend fun addTrade( @Body trade: CreateTradeDTO): Response<TradeDTO>
 
     // --- Products ---
 
     @GET("products")
-    suspend fun getProducts(@Header("Authorization") token: String): Response<List<ProductDTO>>
+    suspend fun getProducts(): Response<List<ProductDTO>>
 
     // --- Silver Types ---
 
     @GET("silver-types")
-    suspend fun getSilverTypes(@Header("Authorization") token: String): Response<List<SilverTypeDTO>>
+    suspend fun getSilverTypes(): Response<List<SilverTypeDTO>>
 
 }

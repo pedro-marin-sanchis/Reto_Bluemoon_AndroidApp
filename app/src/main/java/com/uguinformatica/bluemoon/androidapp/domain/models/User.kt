@@ -6,6 +6,6 @@ data class User(
     var surnames: String,
     var email: String,
     var address: String,
-    var balance: Float,
-    var password: String
+    var balance: Double,
+    var password: String? = null
 )

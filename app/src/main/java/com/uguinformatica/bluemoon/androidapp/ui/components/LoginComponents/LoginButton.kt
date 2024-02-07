@@ -7,10 +7,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.asLiveData
 import androidx.navigation.NavHostController
+import com.uguinformatica.bluemoon.androidapp.dataStore
+import com.uguinformatica.bluemoon.androidapp.domain.usecase.LoginUseCase
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun LoginButton(navHostController: NavHostController) {
