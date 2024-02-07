@@ -57,6 +57,7 @@ import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -77,9 +78,10 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.LoginViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.UserDataViewModel
 import kotlinx.coroutines.launch
 
 
@@ -91,43 +93,49 @@ class MainActivity : ComponentActivity() {
             BlueMoon_aplicationTheme {
                 val simulationViewModel: SimulationViewModel by viewModels()
                 val cartViewModel: CartViewModel by viewModels()
+                val userViewModel: UserDataViewModel by viewModels()
+                val loginViewModel: LoginViewModel by viewModels()
+
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val navController = rememberNavController()
-                MyModalNavigation(
+
+                ModalNavigation(
                     drawerValue = drawerState,
                     navController = navController,
                     simulationViewModel,
-                    cartViewModel
+                    cartViewModel,
+                    userViewModel,
+                    loginViewModel
                 )
             }
         }
     }
-
 }
 
 @Composable
-fun MyScaffold(
+fun MainScaffold(
     simulationViewModel: SimulationViewModel,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
     drawerState: DrawerState,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    userDataViewModel: UserDataViewModel,
+    loginViewModel: LoginViewModel
 ) {
-
     var topAppBarState by remember { mutableStateOf(false) }
     var topAppBarTitle by remember { mutableStateOf("") }
     var cartButtonState by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { if (topAppBarState) MyTopAppBar(drawerState, topAppBarTitle, navController, cartButtonState) }
+        topBar = { if (topAppBarState) MainTopAppBar(drawerState, topAppBarTitle, navController, cartButtonState) }
     ) {
 
         val paddingValues = it
 
         NavHost(navController = navController, startDestination = "LoginScreen" ) {
             composable("LoginScreen") {
-                LoginScreen(navController)
+                LoginScreen(navController, loginViewModel)
                 topAppBarState = false
             }
             composable("RegisterScreen") {
@@ -139,7 +147,7 @@ fun MyScaffold(
                 topAppBarState = false
             }
             composable("UserDataScreen") {
-                UserDataScreen(paddingValues)
+                UserDataScreen(paddingValues, userDataViewModel)
                 topAppBarTitle = "User Data"
                 cartButtonState = false
                 topAppBarState = true
@@ -190,7 +198,7 @@ fun MyScaffold(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBar(
+fun MainTopAppBar(
     drawerState: DrawerState,
     topAppBarTitle: String,
     navHostController: NavHostController,
@@ -233,15 +241,17 @@ fun MyTopAppBar(
 }
 
 @Composable
-private fun MyModalNavigation(
+private fun ModalNavigation(
     drawerValue: DrawerState,
     navController: NavHostController,
     simulationViewModel: SimulationViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    userDataViewModel: UserDataViewModel,
+    loginViewModel: LoginViewModel
 ) {
     val drawerState = drawerValue
     val snackbarHostState = remember { SnackbarHostState() }
-    var isSelected by remember { mutableStateOf("User Data") }
+    var isSelected by remember { mutableStateOf("Products") }
     val scope = rememberCoroutineScope()
 
 
@@ -353,7 +363,7 @@ private fun MyModalNavigation(
                         text = "LogOut",
                         color = md_theme_light_secondaryContainer,
                         modifier = Modifier.padding(end = 15.dp)
-                        )
+                    )
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Logout,
                         contentDescription = "Logout",
@@ -364,12 +374,14 @@ private fun MyModalNavigation(
             }
         }
     ) {
-        MyScaffold(
+        MainScaffold(
             simulationViewModel,
             navController,
             snackbarHostState,
             drawerState,
-            cartViewModel
+            cartViewModel,
+            userDataViewModel,
+            loginViewModel
         )
     }
 }

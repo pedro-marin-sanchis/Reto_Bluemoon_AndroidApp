@@ -20,9 +20,10 @@ import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.Logi
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.NotAccount
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.PasswordField
 import com.uguinformatica.bluemoon.androidapp.ui.components.LoginComponents.UserField
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.LoginViewModel
 
 @Composable
-fun LoginScreen(navHostController: NavHostController) {
+fun LoginScreen(navHostController: NavHostController, loginViewModel: LoginViewModel) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
