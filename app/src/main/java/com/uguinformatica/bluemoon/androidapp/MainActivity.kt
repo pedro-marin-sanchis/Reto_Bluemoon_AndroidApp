@@ -171,6 +171,7 @@ fun MainScaffold(
                 topAppBarState = true
             }
             composable("CartScreen") {
+                cartViewModel.fetchCartItems()
                 CartScreen(paddingValues, cartViewModel)
                 topAppBarTitle = "Cart"
                 cartButtonState = false

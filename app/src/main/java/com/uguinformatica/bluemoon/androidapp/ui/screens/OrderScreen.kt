@@ -17,31 +17,12 @@ fun OrderScreen(paddingValues: PaddingValues) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(1),
         content = {
-            items(getOrders()) {index ->
+            /*items(getOrders()) {index ->
                 OrderItem(order = index)
-            }
+            }*/
         },
         modifier = Modifier.padding(paddingValues),
         userScrollEnabled = true
     )
 }
 
-fun getOrders(): List<Order> {
-    return listOf(
-        Order("12/12/2012","C/Example Nº21", getProductsOrders()),
-        Order("12/12/2012","C/Example Nº21", getProductsOrders()),
-        Order("12/12/2012","C/Example Nº21", getProductsOrders()),
-        Order("12/12/2012","C/Example Nº21", getProductsOrders()),
-        Order("12/12/2012","C/Example Nº21", getProductsOrders()),
-        Order("12/12/2012","C/Example Nº21", getProductsOrders()),
-        Order("12/12/2012","C/Example Nº21", getProductsOrders()),
-    )
-}
-
-fun getProductsOrders(): List<Product> {
-    return listOf(
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo)
-    )
-}

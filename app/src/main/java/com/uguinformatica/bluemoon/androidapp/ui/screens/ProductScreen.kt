@@ -21,24 +21,14 @@ fun ProductScreen(
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         content = {
-            getProducts().let {
+           /* getProducts().let {
                 items(it) {index ->
                     ProductListItem(product = index, navHostController)
                 }
-            }
+            }*/
         },
         modifier = Modifier.padding(paddingValues),
         userScrollEnabled = true
     )
 }
 
-private fun getProducts(): List<Product> {
-    return listOf(
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo)
-    )
-}

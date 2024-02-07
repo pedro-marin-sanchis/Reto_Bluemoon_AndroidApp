@@ -29,10 +29,10 @@ fun ProductListItem(product: Product, navHostController: NavHostController) {
                 "ProductDetailScreen/${product.image}/${product.name}/${product.description}/${product.price}"
             ) }
     ) {
-        Image(
+        /*Image(
             painter = painterResource(id = product.image),
             contentDescription = "Product Image"
-        )
+        )*/
 
         Text(
             text = product.name,
