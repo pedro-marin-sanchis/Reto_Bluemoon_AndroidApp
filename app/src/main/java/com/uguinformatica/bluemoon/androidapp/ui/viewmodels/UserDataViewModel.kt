@@ -11,6 +11,7 @@ import com.uguinformatica.bluemoon.androidapp.domain.models.User
 import com.uguinformatica.bluemoon.androidapp.domain.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -91,9 +92,13 @@ class UserDataViewModel @Inject constructor(
                     e.printStackTrace()
                 }
             }
-            disableModify()
+
 
         }
+        disableModify()
+    }
+
+    private fun updatePassword() {
     }
 
     private fun disableModify() {
