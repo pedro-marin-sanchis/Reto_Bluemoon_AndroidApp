@@ -28,12 +28,13 @@ class UserDataViewModel : ViewModel() {
     val confirmPassword: LiveData<String> = _confirmPassword
     val address: LiveData<String> = _address
     val modify: LiveData<Boolean> = _modify
+    val showPassword: LiveData<Boolean> = _showPassword
 
     private fun disableModify() {
         _modify.value = false
     }
 
-    private fun checkPassword(): Boolean {
+    private fun arePasswordEquals(): Boolean {
         return _password.value == _confirmPassword.value
     }
 
@@ -44,7 +45,7 @@ class UserDataViewModel : ViewModel() {
     fun checkFields() {
         if (_name.value != "" && _surname.value != "" &&
             _username.value != "" && _emailOK.value == true &&
-            checkPassword() && _address.value != "")
+            arePasswordEquals() && _address.value != "")
         {
             disableModify()
         }

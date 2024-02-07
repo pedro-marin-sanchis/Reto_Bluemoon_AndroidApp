@@ -70,6 +70,7 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.LoginViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.UserDataViewModel
@@ -85,6 +86,8 @@ class MainActivity : ComponentActivity() {
                 val simulationViewModel: SimulationViewModel by viewModels()
                 val cartViewModel: CartViewModel by viewModels()
                 val userViewModel: UserDataViewModel by viewModels()
+                val loginViewModel: LoginViewModel by viewModels()
+
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val navController = rememberNavController()
 
@@ -93,7 +96,8 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     simulationViewModel,
                     cartViewModel,
-                    userViewModel
+                    userViewModel,
+                    loginViewModel
                 )
             }
         }
@@ -107,7 +111,8 @@ fun MainScaffold(
     snackbarHostState: SnackbarHostState,
     drawerState: DrawerState,
     cartViewModel: CartViewModel,
-    userDataViewModel: UserDataViewModel
+    userDataViewModel: UserDataViewModel,
+    loginViewModel: LoginViewModel
 ) {
     var topAppBarState by remember { mutableStateOf(false) }
     var topAppBarTitle by remember { mutableStateOf("") }
@@ -122,7 +127,7 @@ fun MainScaffold(
 
         NavHost(navController = navController, startDestination = "LoginScreen" ) {
             composable("LoginScreen") {
-                LoginScreen(navController)
+                LoginScreen(navController, loginViewModel)
                 topAppBarState = false
             }
             composable("RegisterScreen") {
@@ -233,7 +238,8 @@ private fun ModalNavigation(
     navController: NavHostController,
     simulationViewModel: SimulationViewModel,
     cartViewModel: CartViewModel,
-    userDataViewModel: UserDataViewModel
+    userDataViewModel: UserDataViewModel,
+    loginViewModel: LoginViewModel
 ) {
     val drawerState = drawerValue
     val snackbarHostState = remember { SnackbarHostState() }
@@ -366,53 +372,10 @@ private fun ModalNavigation(
             snackbarHostState,
             drawerState,
             cartViewModel,
-            userDataViewModel
+            userDataViewModel,
+            loginViewModel
         )
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MyTopAppBar(
-    drawerState: DrawerState,
-    topAppBarTitle: String,
-    navHostController: NavHostController,
-    cartButtonState: Boolean
-) {
-
-    val scope = rememberCoroutineScope()
-
-    TopAppBar(
-        title = { Text(text = topAppBarTitle, color = Color.White) },
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    scope.launch {
-                        drawerState.apply {
-                            if (isClosed) open() else close()
-                        }
-                    }
-                }
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.bluemoonlogo),
-                    contentDescription = "Cart",
-                    modifier = Modifier.size(50.dp))
-            }
-        },
-        actions = {
-            if (cartButtonState) {
-                IconButton(onClick = { navHostController.navigate("CartScreen") }) {
-                    Icon(
-                        imageVector = Icons.Filled.ShoppingCart,
-                        contentDescription = "Cart",
-                        tint = Color.White
-                    )
-                }
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(md_theme_light_secondary)
-    )
 }
 
 @Composable
