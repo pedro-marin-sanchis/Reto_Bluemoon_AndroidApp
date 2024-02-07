@@ -6,8 +6,18 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.uguinformatica.bluemoon.androidapp.domain.usecase.UserUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class UserDataViewModel : ViewModel() {
+@HiltViewModel
+class UserDataViewModel @Inject constructor(
+    val userUseCase: UserUseCase
+) : ViewModel() {
 
     private var _name = MutableLiveData("")
     private var _surname = MutableLiveData("")
@@ -30,6 +40,29 @@ class UserDataViewModel : ViewModel() {
     val modify: LiveData<Boolean> = _modify
     val showPassword: LiveData<Boolean> = _showPassword
 
+
+    fun fetchUserData() {
+
+        viewModelScope.launch {
+
+            try {
+
+                val user = withContext(Dispatchers.IO) {
+                    userUseCase.getUser()
+                }
+
+                _username.postValue(user.userName)
+                _name.postValue(user.name)
+                _surname.postValue(user.surnames)
+                _email.postValue(user.email)
+                _address.postValue(user.address)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     private fun disableModify() {
         _modify.value = false
     }
@@ -45,13 +78,16 @@ class UserDataViewModel : ViewModel() {
     fun checkFields() {
         if (_name.value != "" && _surname.value != "" &&
             _username.value != "" && _emailOK.value == true &&
-            arePasswordEquals() && _address.value != "")
-        {
+            arePasswordEquals() && _address.value != ""
+        ) {
             disableModify()
         }
     }
 
-    fun changeHideNonePassword(none: VisualTransformation, hide: VisualTransformation): VisualTransformation {
+    fun changeHideNonePassword(
+        none: VisualTransformation,
+        hide: VisualTransformation
+    ): VisualTransformation {
         return if (_showPassword.value == true) {
             none
         } else {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,13 +30,16 @@ import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.UserDataViewModel
 
 @Composable
 fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataViewModel) {
-    var nameData by remember { mutableStateOf("") }
-    var surnameData by remember { mutableStateOf("") }
-    var emailData by remember { mutableStateOf("") }
-    var usernameData by remember { mutableStateOf("") }
-    var passwordData by remember { mutableStateOf("") }
-    var confirmpassworddata by remember { mutableStateOf("") }
-    var addressData by remember { mutableStateOf("") }
+    val nameData by userDataViewModel.name.observeAsState(initial = "")
+    val surnameData by userDataViewModel.surname.observeAsState(initial = "")
+    val emailData by userDataViewModel.email.observeAsState(initial = "")
+    val usernameData by userDataViewModel.username.observeAsState(initial = "")
+    val passwordData by userDataViewModel.password.observeAsState(initial = "")
+    val confirmpassworddata by userDataViewModel.confirmPassword.observeAsState(initial = "")
+    val addressData by userDataViewModel.address.observeAsState(initial = "")
+
+    userDataViewModel.fetchUserData()
+
 
     var areFieldsEnabled by remember { mutableStateOf(false) }
 
@@ -56,25 +60,49 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
             Spacer(modifier = Modifier.padding(12.dp))
 
             // Otros campos de texto
-            NameData(name = nameData, onTextFieldChanged = { nameData = it }, enabled = areFieldsEnabled)
+            NameData(name = nameData, onTextFieldChanged = {
+                userDataViewModel.setName(it)
+            }, enabled = areFieldsEnabled)
             Spacer(modifier = Modifier.padding(12.dp))
 
-            SurnameData(surname = surnameData, onTextFieldChanged = { surnameData = it }, enabled = areFieldsEnabled)
+            SurnameData(surname = surnameData, onTextFieldChanged = {
+                userDataViewModel.setSurname(it)
+            }, enabled = areFieldsEnabled)
             Spacer(modifier = Modifier.padding(12.dp))
 
-            EmailData(data = emailData, onTextFieldChanged = { emailData = it }, enabled = areFieldsEnabled)
+            EmailData(
+                data = emailData,
+                onTextFieldChanged = { userDataViewModel.setEmail(it) },
+                enabled = areFieldsEnabled
+            )
             Spacer(modifier = Modifier.padding(12.dp))
 
-            UsernameData(username = usernameData, onTextFieldChanged = { usernameData = it }, enabled = areFieldsEnabled)
+            UsernameData(
+                username = usernameData,
+                onTextFieldChanged = { userDataViewModel.setUsername(it) },
+                enabled = areFieldsEnabled
+            )
             Spacer(modifier = Modifier.padding(12.dp))
 
-            PasswordRegisterData(passwordState = passwordData, onTextFieldChanged = { passwordData = it }, enabled = areFieldsEnabled)
+            PasswordRegisterData(
+                passwordState = passwordData,
+                onTextFieldChanged = { userDataViewModel.setPassword(it) },
+                enabled = areFieldsEnabled
+            )
             Spacer(modifier = Modifier.padding(12.dp))
 
-            ConfirmPasswordData(confirmpasswordState = confirmpassworddata, onTextFieldChanged = { confirmpassworddata = it }, enabled = areFieldsEnabled)
+            ConfirmPasswordData(
+                confirmpasswordState = confirmpassworddata,
+                onTextFieldChanged = { userDataViewModel.setConfirmPassword(it) },
+                enabled = areFieldsEnabled
+            )
             Spacer(modifier = Modifier.padding(12.dp))
 
-            AddressFieldData(address = addressData, onTextFieldChanged = { addressData = it }, enabled = areFieldsEnabled)
+            AddressFieldData(
+                address = addressData,
+                onTextFieldChanged = { userDataViewModel.setAddress(it) },
+                enabled = areFieldsEnabled
+            )
             Spacer(modifier = Modifier.padding(12.dp))
 
             // Botón para modificar

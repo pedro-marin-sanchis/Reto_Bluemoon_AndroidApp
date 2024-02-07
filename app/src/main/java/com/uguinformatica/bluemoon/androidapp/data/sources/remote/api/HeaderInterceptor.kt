@@ -22,10 +22,14 @@ class HeaderInterceptor @Inject constructor(
     @ApplicationContext val context: Context
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
+        val originalRequest = chain.request()
+
+        if (originalRequest.url().encodedPath().endsWith("/api/login")) {
+            return chain.proceed(originalRequest)
+        }
 
         val token = runBlocking { getToken() }
 
-        val originalRequest = chain.request()
         val newRequest = originalRequest.newBuilder()
             .addHeader("Authorization", token)
             .build()

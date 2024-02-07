@@ -17,6 +17,8 @@ class UserRepositoryImpl @Inject constructor(
         if (!response.isSuccessful){
             // TODO: throw exception
             println("ERROR user")
+
+            throw Exception("Error while getting user")
         }
 
         val userDto = response.body()!!
@@ -33,6 +35,8 @@ class UserRepositoryImpl @Inject constructor(
 
             // TODO: throw exception
             println("ERROR update user")
+
+            throw Exception("Error while updating user")
             return
         }
 
