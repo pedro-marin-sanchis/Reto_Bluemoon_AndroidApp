@@ -16,9 +16,21 @@ fun userDtoToUser(userDTO: UserDTO): User {
     )
 }
 
+fun userToUserDto(user: User): UserDTO {
+    return UserDTO(
+        username = user.userName,
+        name = user.name,
+        surnames = user.surnames,
+        address = user.address,
+        email = user.email,
+        balance = user.balance,
+    )
+}
+
 fun userLoginToUserLoginDto(userLogin: UserLogin): LoginDto {
     return LoginDto(
         username = userLogin.username,
         password = userLogin.password
     )
 }
+

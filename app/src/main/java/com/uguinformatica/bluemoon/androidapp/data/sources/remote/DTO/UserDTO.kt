@@ -1,7 +1,7 @@
 package com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO
 
-data class UserDTO (
-    var id: Long,
+data class UserDTO(
+    var id: Long? = null,
     var username: String,
     var name: String,
     var address: String,
