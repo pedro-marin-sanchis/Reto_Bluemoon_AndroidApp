@@ -65,11 +65,8 @@ class UserDataViewModel @Inject constructor(
     }
 
     fun haveSomeFieldChanged(user: User): Boolean {
-        return user.userName != _username.value ||
-                user.name != _name.value ||
-                user.surnames != _surname.value ||
-                user.email != _email.value ||
-                user.address != _address.value
+        // TODO: Implement check if some field has changed
+        return true
     }
 
     fun updateUser() {
