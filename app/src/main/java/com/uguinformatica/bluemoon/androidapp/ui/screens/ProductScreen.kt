@@ -7,19 +7,23 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.domain.models.Product
 import com.uguinformatica.bluemoon.androidapp.ui.components.ProductComponents.ProductListItem
 
 
 @Composable
-fun ProductScreen(paddingValues: PaddingValues) {
+fun ProductScreen(
+    paddingValues: PaddingValues,
+    navHostController: NavHostController
+) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         content = {
             getProducts().let {
                 items(it) {index ->
-                    ProductListItem(product = index)
+                    ProductListItem(product = index, navHostController)
                 }
             }
         },
@@ -30,11 +34,11 @@ fun ProductScreen(paddingValues: PaddingValues) {
 
 private fun getProducts(): List<Product> {
     return listOf(
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo)
+        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
+        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
+        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
+        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
+        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
+        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo)
     )
 }

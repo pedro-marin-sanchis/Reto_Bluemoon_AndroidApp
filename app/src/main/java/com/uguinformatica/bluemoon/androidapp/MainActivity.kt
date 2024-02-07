@@ -51,9 +51,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.uguinformatica.bluemoon.androidapp.theme.BlueMoon_aplicationTheme
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_tertiaryContainer
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondary
@@ -62,15 +64,19 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.CartScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.ForgotPasswordScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.LoginScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.OrderScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductDetailScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.UserDataViewModel
 import kotlinx.coroutines.launch
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +88,7 @@ class MainActivity : ComponentActivity() {
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val navController = rememberNavController()
 
-                MyModalNavigation(
+                ModalNavigation(
                     drawerValue = drawerState,
                     navController = navController,
                     simulationViewModel,
@@ -95,7 +101,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyScaffold(
+fun MainScaffold(
     simulationViewModel: SimulationViewModel,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
@@ -109,7 +115,7 @@ fun MyScaffold(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { if (topAppBarState) MyTopAppBar(drawerState, topAppBarTitle, navController, cartButtonState) }
+        topBar = { if (topAppBarState) MainTopAppBar(drawerState, topAppBarTitle, navController, cartButtonState) }
     ) {
 
         val paddingValues = it
@@ -140,7 +146,7 @@ fun MyScaffold(
                 topAppBarState = true
             }
             composable("ProductScreen") {
-                ProductScreen(paddingValues)
+                ProductScreen(paddingValues, navController)
                 topAppBarTitle = "Products"
                 cartButtonState = true
                 topAppBarState = true
@@ -157,12 +163,72 @@ fun MyScaffold(
                 cartButtonState = false
                 topAppBarState = true
             }
+            composable("ProductDetailScreen/{image}/{name}/{description}/{price}",
+                arguments = listOf(
+                    navArgument("image") {type = NavType.IntType},
+                    navArgument("name") {type = NavType.StringType},
+                    navArgument("description") {type = NavType.StringType},
+                    navArgument("price") {type = NavType.FloatType}
+                )
+            ){
+                val param1 = it.arguments?.getInt("image") ?: 0
+                val param2 = it.arguments?.getString("name") ?: ""
+                val param3 = it.arguments?.getString("description") ?: ""
+                val param4 = it.arguments?.getFloat("price") ?: 0f
+                ProductDetailScreen(param1,param2,param3,param4,paddingValues,navController)
+                topAppBarTitle = "Product Detail"
+                cartButtonState = true
+            }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MyModalNavigation(
+fun MainTopAppBar(
+    drawerState: DrawerState,
+    topAppBarTitle: String,
+    navHostController: NavHostController,
+    cartButtonState: Boolean
+) {
+
+    val scope = rememberCoroutineScope()
+
+    TopAppBar(
+        title = { Text(text = topAppBarTitle, color = Color.White) },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    scope.launch {
+                        drawerState.apply {
+                            if (isClosed) open() else close()
+                        }
+                    }
+                }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.bluemoonlogo),
+                    contentDescription = "Cart",
+                    modifier = Modifier.size(50.dp))
+            }
+        },
+        actions = {
+            if (cartButtonState) {
+                IconButton(onClick = { navHostController.navigate("CartScreen") }) {
+                    Icon(
+                        imageVector = Icons.Filled.ShoppingCart,
+                        contentDescription = "Cart",
+                        tint = Color.White
+                    )
+                }
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(md_theme_light_secondary)
+    )
+}
+
+@Composable
+private fun ModalNavigation(
     drawerValue: DrawerState,
     navController: NavHostController,
     simulationViewModel: SimulationViewModel,
@@ -294,7 +360,7 @@ private fun MyModalNavigation(
             }
         }
     ) {
-        MyScaffold(
+        MainScaffold(
             simulationViewModel,
             navController,
             snackbarHostState,
