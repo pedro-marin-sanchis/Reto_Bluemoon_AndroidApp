@@ -36,8 +36,9 @@ class UserRepositoryImpl @Inject constructor(
             // TODO: throw exception
             println("ERROR update user")
 
+            println(response.code())
+            println(response.errorBody())
             throw Exception("Error while updating user")
-            return
         }
 
 

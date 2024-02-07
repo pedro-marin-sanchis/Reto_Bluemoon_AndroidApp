@@ -9,16 +9,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
-fun AddressFieldData(address: String, onTextFieldChanged: (String) -> Unit, enabled: Boolean) {
+fun CustomField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: @Composable () -> Unit,
+    enabled: Boolean
+) {
     TextField(
         enabled = enabled,
-        value = address,
-        onValueChange = { onTextFieldChanged(it) },
-        label = { Text(text = "Address") },
+        value = value,
+        onValueChange = { onValueChange(it) },
+        label = { label },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Text
         ),
         singleLine = true,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
     )
 }

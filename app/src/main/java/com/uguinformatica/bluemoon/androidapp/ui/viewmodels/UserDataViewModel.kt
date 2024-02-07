@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.uguinformatica.bluemoon.androidapp.domain.models.User
 import com.uguinformatica.bluemoon.androidapp.domain.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +27,7 @@ class UserDataViewModel @Inject constructor(
     private var _password = MutableLiveData("")
     private var _confirmPassword = MutableLiveData("")
     private var _address = MutableLiveData("")
-    private var _modify = MutableLiveData(false)
+    private var _areFieldsEnabled = MutableLiveData(false)
     private var _emailOK = MutableLiveData(false)
     private var _showPassword = MutableLiveData(false)
 
@@ -37,7 +38,7 @@ class UserDataViewModel @Inject constructor(
     val password: LiveData<String> = _password
     val confirmPassword: LiveData<String> = _confirmPassword
     val address: LiveData<String> = _address
-    val modify: LiveData<Boolean> = _modify
+    val areFieldsEnabled: LiveData<Boolean> = _areFieldsEnabled
     val showPassword: LiveData<Boolean> = _showPassword
 
 
@@ -63,8 +64,43 @@ class UserDataViewModel @Inject constructor(
         }
     }
 
+    fun haveSomeFieldChanged(user: User): Boolean {
+        return user.userName != _username.value ||
+                user.name != _name.value ||
+                user.surnames != _surname.value ||
+                user.email != _email.value ||
+                user.address != _address.value
+    }
+
+    fun updateUser() {
+
+
+        viewModelScope.launch(Dispatchers.IO) {
+            if (checkFields()) {
+                try {
+                    val user = User(
+                        userName = _username.value!!,
+                        name = _name.value!!,
+                        surnames = _surname.value!!,
+                        email = _email.value!!,
+                        address = _address.value!!,
+                        balance = 0.0,
+                    )
+
+                    if (haveSomeFieldChanged(user)) {
+                        userUseCase.updateUser(user)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            disableModify()
+
+        }
+    }
+
     private fun disableModify() {
-        _modify.value = false
+        _areFieldsEnabled.value = false
     }
 
     private fun arePasswordEquals(): Boolean {
@@ -75,13 +111,11 @@ class UserDataViewModel @Inject constructor(
         _emailOK.value = Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
-    fun checkFields() {
-        if (_name.value != "" && _surname.value != "" &&
-            _username.value != "" && _emailOK.value == true &&
-            arePasswordEquals() && _address.value != ""
-        ) {
-            disableModify()
+    fun checkFields(): Boolean {
+        if (_name.value == "" || _surname.value == "" || _email.value == "" || _username.value == "" || _address.value == "") {
+            return false
         }
+        return true
     }
 
     fun changeHideNonePassword(
@@ -104,34 +138,34 @@ class UserDataViewModel @Inject constructor(
     }
 
     fun setName(name: String) {
-        _name.value = name
+        _name.postValue(name)
     }
 
     fun setSurname(surname: String) {
-        _surname.value = surname
+        _surname.postValue(surname)
     }
 
     fun setEmail(email: String) {
-        _email.value = email
+        _email.postValue(email)
     }
 
     fun setUsername(username: String) {
-        _username.value = username
+        _username.postValue(username)
     }
 
     fun setPassword(password: String) {
-        _password.value = password
+        _password.postValue(password)
     }
 
     fun setConfirmPassword(confirmPassword: String) {
-        _confirmPassword.value = confirmPassword
+        _confirmPassword.postValue(confirmPassword)
     }
 
     fun setAddress(address: String) {
-        _address.value = address
+        _address.postValue(address)
     }
 
     fun enableModify() {
-        _modify.value = true
+        _areFieldsEnabled.value = true
     }
 }

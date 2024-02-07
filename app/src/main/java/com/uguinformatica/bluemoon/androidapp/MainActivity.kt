@@ -273,6 +273,7 @@ private fun ModalNavigation(
                     selected =  isSelected == "User Data",
                     onClick = {
                         isSelected = "User Data"
+                        userDataViewModel.fetchUserData()
                         navController.navigate("UserDataScreen")
                         scope.launch {
                             drawerState.apply {
