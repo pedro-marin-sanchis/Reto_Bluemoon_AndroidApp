@@ -34,7 +34,7 @@ class SourcesProvider {
         return Retrofit
             .Builder()
             .client(client)
-            .baseUrl("http://192.168.103.63:8080/api/")
+            .baseUrl("http://192.168.103.130:8080/api/")
             .addConverterFactory(
                 GsonConverterFactory
                     .create(gson)
