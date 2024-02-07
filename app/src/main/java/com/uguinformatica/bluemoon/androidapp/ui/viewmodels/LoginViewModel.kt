@@ -5,7 +5,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 
+@HiltViewModel
 class LoginViewModel : ViewModel() {
 
     private var _username = MutableLiveData("")
@@ -46,5 +48,13 @@ class LoginViewModel : ViewModel() {
 
     private fun checkPassword(): Boolean {
         return _password.value != ""
+    }
+
+    fun setUsername(username: String) {
+        _username.value = username
+    }
+
+    fun setPassword(password: String) {
+        _password.value = password
     }
 }
