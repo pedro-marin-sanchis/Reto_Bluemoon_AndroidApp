@@ -1,7 +1,9 @@
 package com.uguinformatica.bluemoon.androidapp.data.repsotories
 
 import com.uguinformatica.bluemoon.androidapp.data.mappers.userDtoToUser
+import com.uguinformatica.bluemoon.androidapp.data.mappers.userToPasswordDto
 import com.uguinformatica.bluemoon.androidapp.data.mappers.userToUserDto
+import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.PasswordDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.api.BlueMoonApiService
 import com.uguinformatica.bluemoon.androidapp.domain.models.User
 import com.uguinformatica.bluemoon.androidapp.domain.repositories.IUserRepository
@@ -41,6 +43,24 @@ class UserRepositoryImpl @Inject constructor(
             throw Exception("Error while updating user")
         }
 
+
+    }
+
+    override suspend fun updateUserPassword(password: String) {
+        val passwordDTO = PasswordDTO(password)
+
+        val response = blueMoonApi.updatePassword(passwordDTO)
+
+        if (!response.isSuccessful) {
+            // TODO: throw exception
+            println("ERROR update password")
+
+            println(response.code())
+            println(response.errorBody())
+
+            throw Exception("Error while updating password")
+
+        }
 
     }
 

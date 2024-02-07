@@ -98,7 +98,19 @@ class UserDataViewModel @Inject constructor(
         disableModify()
     }
 
-    private fun updatePassword() {
+    fun updatePassword() {
+        if (arePasswordEquals()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    userUseCase.updateUserPassword(_password.value!!)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            _password.postValue("")
+            _confirmPassword.postValue("")
+        }
     }
 
     private fun disableModify() {

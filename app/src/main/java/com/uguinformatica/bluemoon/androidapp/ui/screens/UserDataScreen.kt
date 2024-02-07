@@ -32,9 +32,6 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
     val confirmPasswordData by userDataViewModel.confirmPassword.observeAsState(initial = "")
     val addressData by userDataViewModel.address.observeAsState(initial = "")
 
-
-
-
     val areFieldsEnabled by userDataViewModel.areFieldsEnabled.observeAsState(initial = false)
 
     val scrollState = rememberScrollState()
@@ -104,7 +101,7 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
                     userDataViewModel.enableModify()
                 }
             }) {
-                
+
                 Text(if (areFieldsEnabled) "Save" else "Modify")
 
             }
@@ -138,12 +135,11 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
             Spacer(modifier = Modifier.padding(12.dp))
 
 
-
             // Botón para modificar
 
             Button(onClick = {
                 if (areFieldsEnabled) {
-                    userDataViewModel.updateUser()
+                    userDataViewModel.updatePassword()
                 } else {
                     userDataViewModel.enableModify()
                 }

@@ -11,4 +11,6 @@ class UserUseCase @Inject constructor(
 
     suspend fun updateUser(user: User) = userRepository.updateUser(user)
 
+    suspend fun updateUserPassword(password: String) = userRepository.updateUserPassword(password)
+
 }
