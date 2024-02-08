@@ -143,7 +143,7 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
                 if (arePasswordFieldsEnabled) {
                     userDataViewModel.updatePassword()
                 } else {
-                    userDataViewModel.enableModify()
+                    userDataViewModel.enableModifyPassword()
                 }
             }) {
                 Text(if (arePasswordFieldsEnabled) "Save" else "Change Password")

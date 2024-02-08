@@ -11,12 +11,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 class SimulationViewModel : ViewModel() {
 
     private var _tradeableItemList = MutableLiveData(mutableListOf<Tradeable>())
+    private var _tradeableItem = MutableLiveData(Tradeable(0f,"",null, SilverType("",0f)))
     private var _weight = MutableLiveData("")
     private var _description = MutableLiveData("")
     private var _sellPrice = MutableLiveData("")
     private var _silverTypeList = MutableLiveData(listOf<SilverType>())
     private var _openAlertDialog = MutableLiveData(false)
     private var _openAddItemDialog = MutableLiveData(false)
+    private var _openModifyItemDialog = MutableLiveData(false)
 
     val weight: LiveData<String> = _weight
     val description: LiveData<String> = _description
@@ -25,6 +27,8 @@ class SimulationViewModel : ViewModel() {
     val openAlertDialog:LiveData<Boolean> = _openAlertDialog
     val openAddItemDialog: LiveData<Boolean> = _openAddItemDialog
     val tradeableItemList: LiveData<MutableList<Tradeable>> = _tradeableItemList
+    val tradeableItem: LiveData<Tradeable> = _tradeableItem
+    val openModifyItemDialog: LiveData<Boolean> = _openModifyItemDialog
 
     fun setWeight(weight: String) {
         _weight.postValue(weight)
@@ -48,5 +52,17 @@ class SimulationViewModel : ViewModel() {
 
     fun changeOpenAddItemDialog(openAddItemDialog: Boolean) {
         _openAddItemDialog.postValue(!openAddItemDialog)
+    }
+
+    fun changeOpenModifyItemDialog(openModifyItemDialog: Boolean, tradeable: Tradeable) {
+        _tradeableItem.value = tradeable
+        setWeight(tradeable.weight.toString())
+        setDescription(tradeable.description)
+        _openModifyItemDialog.postValue(!openModifyItemDialog)
+    }
+
+    fun modifyTradeable(tradeable: Tradeable) {
+        tradeable.weight = _weight.value?.toFloat()!!
+        tradeable.description = description.value!!
     }
 }

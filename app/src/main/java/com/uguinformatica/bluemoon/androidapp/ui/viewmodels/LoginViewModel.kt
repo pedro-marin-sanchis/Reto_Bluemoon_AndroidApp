@@ -23,34 +23,13 @@ class LoginViewModel @Inject constructor(
 
     private var _username = MutableLiveData("")
     private var _password = MutableLiveData("")
-    private var _showPassword = MutableLiveData(false)
     private var _isLoged = MutableLiveData(false)
 
     val username: LiveData<String> = _username
     val password: LiveData<String> = _password
-    val showPassword: LiveData<Boolean> = _showPassword
     val isLoged: LiveData<Boolean> = _isLoged
 
-    fun changeHideNonePassword(
-        none: VisualTransformation,
-        hide: VisualTransformation
-    ): VisualTransformation {
-        return if (_showPassword.value == true) {
-            none
-        } else {
-            hide
-        }
-    }
-
-    fun changeIcon(openEye: ImageVector, closedEye: ImageVector): ImageVector {
-        return if (_showPassword.value == true) {
-            openEye
-        } else {
-            closedEye
-        }
-    }
-
-    fun checkFields(): Boolean {
+    private fun checkFields(): Boolean {
         return checkUsername() && checkPassword()
     }
 

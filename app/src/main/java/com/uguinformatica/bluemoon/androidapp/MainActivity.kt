@@ -128,6 +128,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MainScaffold(
     simulationViewModel: SimulationViewModel,
@@ -288,6 +289,7 @@ private fun ModalNavigation(
     val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
+        gesturesEnabled = false,
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(drawerContainerColor = md_theme_light_secondary) {
@@ -436,7 +438,7 @@ private fun ModalNavigation(
             registerViewModel,
             tradeViewModel,
             forgotPasswordViewModel,
-            productViewModel
+            productViewModel,
         )
     }
 }

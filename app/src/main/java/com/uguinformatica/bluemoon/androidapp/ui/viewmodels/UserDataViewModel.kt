@@ -113,6 +113,7 @@ class UserDataViewModel @Inject constructor(
             _password.postValue("")
             _confirmPassword.postValue("")
         }
+        disableModifyPassword()
     }
 
     private fun disableModify() {
@@ -183,5 +184,13 @@ class UserDataViewModel @Inject constructor(
 
     fun enableModify() {
         _areFieldsEnabled.value = true
+    }
+
+    fun enableModifyPassword() {
+        _arePasswordFieldsEnabled.value = true
+    }
+
+    fun disableModifyPassword() {
+        _arePasswordFieldsEnabled.value = false
     }
 }
