@@ -6,6 +6,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.domain.models.Order
@@ -15,12 +17,15 @@ import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.OrderViewModel
 
 @Composable
 fun OrderScreen(paddingValues: PaddingValues, orderViewModel: OrderViewModel) {
+
+    val orders by orderViewModel.ordersList.observeAsState(initial = emptyList())
+
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(1),
         content = {
-            /*items(getOrders()) {index ->
-                OrderItem(order = index)
-            }*/
+            items(orders) { order ->
+                OrderItem(order = order)
+            }
         },
         modifier = Modifier.padding(paddingValues),
         userScrollEnabled = true

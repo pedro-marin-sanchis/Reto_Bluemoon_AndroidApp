@@ -35,6 +35,15 @@ class CartViewModel @Inject constructor(
     var productIdToModify: Long? = null
     var newQuantity: Int? = null
 
+
+    fun checkout() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                cartUseCase.checkout()
+                fetchCartItems()
+            }
+        }
+    }
     fun fetchCartItems() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -59,7 +68,6 @@ class CartViewModel @Inject constructor(
     }
 
     fun updateCartItemQuantity() {
-        println("UPDATE CART ITEM QUANTITY")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 if (productIdToModify != null && _dialogQuantity.value != null) {

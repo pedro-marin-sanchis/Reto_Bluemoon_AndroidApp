@@ -185,6 +185,7 @@ fun MainScaffold(
                 topAppBarState = true
             }
             composable("OrderScreen") {
+                orderViewModel.getOrders()
                 OrderScreen(paddingValues, orderViewModel)
                 topAppBarTitle = "Orders"
                 cartButtonState = false

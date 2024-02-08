@@ -37,7 +37,6 @@ fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
 
     val productItems by cartViewModel.cartItems.observeAsState(emptyList())
 
-    println("PRODUCT ITEMS: $productItems")
     val openAlertDialogConfirm by cartViewModel.openAlertConfirm.observeAsState(false)
     val openAlertDialogDelete by cartViewModel.openAlertDelete.observeAsState(false)
     val openDialogModifyQuantity by cartViewModel.openDialogModify.observeAsState(false)
@@ -46,7 +45,9 @@ fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
         openAlertDialogConfirm -> {
             AlertDialogConfirm(
                 onDismissRequest = { cartViewModel.closeConfirmDialog() },
-                onConfirmation = { cartViewModel.closeConfirmDialog() },
+                onConfirmation = {
+                    cartViewModel.checkout()
+                    cartViewModel.closeConfirmDialog() },
                 dialogTitle = "Confirm the order"
             )
         }

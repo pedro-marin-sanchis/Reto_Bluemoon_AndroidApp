@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uguinformatica.bluemoon.androidapp.domain.models.Order
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
 fun OrderItem(order: Order) {
@@ -32,7 +34,7 @@ fun OrderItem(order: Order) {
             .padding(10.dp)
     ) {
         Text(
-            text = "Date: ${order.date}",
+            text = "Date: ${SimpleDateFormat("dd/MM/yyyy").format(order.date)}",
             fontSize = 20.sp,
             modifier = Modifier.padding(start = 10.dp)
         )
@@ -64,7 +66,7 @@ fun OrderItem(order: Order) {
                 order.productList.map {
                     DropdownMenuItem(
                         text = {
-                            Text(text = "Name: ${it.name} | Price: ${it.price}$") },
+                            Text(text = "Name: ${it.product.name} | Price: ${it.product.price}$ | Quantity: ${it.quantity}") },
                         onClick = { /*TODO*/ }
                     )
                 }

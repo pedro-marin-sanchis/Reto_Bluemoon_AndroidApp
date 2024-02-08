@@ -12,4 +12,6 @@ class CartUseCase @Inject constructor(
     suspend fun deleteCartItem(productId: Long) = cartRepository.deleteCartItem(productId)
 
     suspend fun modifyCartItemQuantity(productId: Long, quantity: Int) = cartRepository.modifyCartItemQuantity(productId, quantity)
+
+    suspend fun checkout() = cartRepository.checkout()
 }
