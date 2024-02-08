@@ -136,7 +136,7 @@ fun MyScaffold(
                 topAppBarState = true
             }
             composable("ProductScreen") {
-                ProductScreen(paddingValues)
+                ProductScreen(paddingValues, navController)
                 topAppBarTitle = "Products"
                 cartButtonState = true
                 topAppBarState = true
