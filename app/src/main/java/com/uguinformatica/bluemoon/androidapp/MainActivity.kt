@@ -1,8 +1,5 @@
 package com.uguinformatica.bluemoon.androidapp
 
-import android.annotation.SuppressLint
-import android.app.Application
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -52,12 +49,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -78,6 +69,7 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.DrawerViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ForgotPasswordViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.LoginViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.OrderViewModel
@@ -106,6 +98,8 @@ class MainActivity : ComponentActivity() {
                 val forgotPasswordViewModel: ForgotPasswordViewModel by viewModels()
                 val productViewModel: ProductViewModel by viewModels()
 
+                val drawerViewModel: DrawerViewModel by viewModels()
+
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val navController = rememberNavController()
 
@@ -120,7 +114,8 @@ class MainActivity : ComponentActivity() {
                     registerViewModel,
                     tradeViewModel,
                     forgotPasswordViewModel,
-                    productViewModel
+                    productViewModel,
+                    drawerViewModel
                 )
             }
         }
@@ -146,6 +141,7 @@ fun MainScaffold(
     var topAppBarTitle by remember { mutableStateOf("") }
     var cartButtonState by remember { mutableStateOf(false) }
 
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { if (topAppBarState) MainTopAppBar(drawerState, topAppBarTitle, navController, cartButtonState) }
@@ -155,6 +151,11 @@ fun MainScaffold(
 
         NavHost(navController = navController, startDestination = "LoginScreen" ) {
             composable("LoginScreen") {
+                println("isLoged: ${loginViewModel.isLoged.value}")
+                if (loginViewModel.checkAndSetIfLoged()) {
+                    println("navigate to ProductScreen")
+                    navController.navigate("ProductScreen")
+                }
                 LoginScreen(navController, loginViewModel)
                 topAppBarState = false
             }
@@ -274,7 +275,8 @@ private fun ModalNavigation(
     registerViewModel: RegisterViewModel,
     tradeViewModel: TradeViewModel,
     forgotPasswordViewModel: ForgotPasswordViewModel,
-    productViewModel: ProductViewModel
+    productViewModel: ProductViewModel,
+    drawerViewModel: DrawerViewModel
 ) {
     val drawerState = drawerValue
     val snackbarHostState = remember { SnackbarHostState() }
@@ -375,12 +377,17 @@ private fun ModalNavigation(
                     .align(End)
                     .padding(top = 60.dp)
                     .clickable {
-                        navController.navigate("LoginScreen")
+                        drawerViewModel.logout()
+                        loginViewModel.setIsLoged(false)
+
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
+                                navController.navigate("LoginScreen")
+
                             }
                         }
+
                     },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End

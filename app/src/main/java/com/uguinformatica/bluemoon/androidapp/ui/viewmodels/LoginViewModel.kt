@@ -7,10 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uguinformatica.bluemoon.androidapp.domain.models.UserLogin
-import com.uguinformatica.bluemoon.androidapp.domain.repositories.ILoginRepository
 import com.uguinformatica.bluemoon.androidapp.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -54,6 +52,17 @@ class LoginViewModel @Inject constructor(
         return checkUsername() && checkPassword()
     }
 
+    fun checkAndSetIfLoged(): Boolean {
+        var result = false
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                result = loginUseCase.isLogged()
+                _isLoged.postValue(result)
+            }
+        }
+        return result
+    }
+
     fun login() {
 
         if (!checkFields()) {
@@ -70,6 +79,10 @@ class LoginViewModel @Inject constructor(
                     loginUseCase.login(loginData)
                     println("Loged")
                     _isLoged.postValue(true)
+
+                    _username.postValue("")
+                    _password.postValue("")
+
                 } catch (e: Exception) {
                     println("Not Loged")
                     _isLoged.postValue(false)
@@ -92,5 +105,9 @@ class LoginViewModel @Inject constructor(
 
     fun setPassword(password: String) {
         _password.postValue(password)
+    }
+
+    fun setIsLoged(isLoged: Boolean) {
+        _isLoged.postValue(isLoged)
     }
 }

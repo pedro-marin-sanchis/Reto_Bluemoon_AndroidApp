@@ -28,4 +28,12 @@ class LoginUseCase @Inject constructor(
         }
 
     }
+
+    suspend fun logout() {
+        loginRepository.logout()
+    }
+
+    suspend fun isLogged(): Boolean {
+        return loginRepository.isLogged()
+    }
 }
