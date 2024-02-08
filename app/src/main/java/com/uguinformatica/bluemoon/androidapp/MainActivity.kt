@@ -1,5 +1,6 @@
 package com.uguinformatica.bluemoon.androidapp
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -284,7 +285,9 @@ private fun ModalNavigation(
     var isSelected by remember { mutableStateOf("Products") }
     val scope = rememberCoroutineScope()
 
+
     ModalNavigationDrawer(
+        gesturesEnabled = false,
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(drawerContainerColor = md_theme_light_secondary) {
