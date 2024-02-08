@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.uguinformatica.bluemoon.androidapp.R
+import com.uguinformatica.bluemoon.androidapp.ui.components.HistoryTradeComponents.TradeCard
 
 @Composable
 fun TradeHistoryScreen() {
@@ -37,60 +38,6 @@ fun TradeHistoryScreen() {
             TradeCard(trade)
         }
     }
-}
-
-@Composable
-fun TradeCard(trade: Trade) {
-    val showDialog = remember { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier
-            .padding(8.dp)
-            .clickable { showDialog.value = true }
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.bluemoonlogo),
-                contentDescription = "Trade Image",
-                modifier = Modifier
-                    .size(64.dp)
-                    .padding(end = 16.dp)
-            )
-            Column {
-                Text(text = trade.date)
-                Text(text = trade.address)
-                Text(text = trade.item)
-            }
-        }
-    }
-
-    if (showDialog.value) {
-        ValidationDialog(trade.isValidated) {
-            showDialog.value = false
-        }
-    }
-}
-
-@Composable
-fun ValidationDialog(isValidated: Boolean, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = "Validation Status")
-        },
-        text = {
-            Text(text = if (isValidated) "Is Validated" else "Is not Validated")
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = "OK")
-            }
-        }
-    )
 }
 
 data class Trade(val date: String, val address: String, val item: String, val isValidated: Boolean)
