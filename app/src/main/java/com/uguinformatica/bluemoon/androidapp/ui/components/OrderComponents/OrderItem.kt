@@ -1,5 +1,6 @@
 package com.uguinformatica.bluemoon.androidapp.ui.components.OrderComponents
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -19,8 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.domain.models.Order
 
 @Composable
@@ -63,10 +67,19 @@ fun OrderItem(order: Order) {
             ) {
                 order.productList.map {
                     DropdownMenuItem(
+                        modifier = Modifier.padding(bottom = 6.dp),
                         text = {
-                            Text(text = "Name: ${it.name} | Price: ${it.price}$") },
-                        onClick = { /*TODO*/ }
+                            Text(text = "Name: ${it.name} \nPrice: ${it.price}$ \nQuantity: 45") },
+                        onClick = { /*TODO*/ },
+                        leadingIcon = {
+                            Image(
+                                painter = painterResource(id = R.drawable.anillo),
+                                contentDescription = "",
+                                modifier = Modifier.size(60.dp)
+                            )
+                        }
                     )
+                    Divider()
                 }
             }
         }
