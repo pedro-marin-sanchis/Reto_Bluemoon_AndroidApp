@@ -77,7 +77,9 @@ fun UserDataScreen(paddingValues: PaddingValues) {
             Spacer(modifier = Modifier.padding(12.dp))
 
             // Botón para modificar
-            ModifierButton(onModifyButtonClick = { areFieldsEnabled = !areFieldsEnabled })
+            ModifierButton(onModifyButtonClick = {
+                areFieldsEnabled = !areFieldsEnabled
+            })
         }
     }
 }
