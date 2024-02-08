@@ -155,6 +155,9 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
                     userDataViewModel.enableModify()
                 }
             })*/
+            ModifierButton(onModifyButtonClick = {
+                areFieldsEnabled = !areFieldsEnabled
+            })
         }
     }
 }
