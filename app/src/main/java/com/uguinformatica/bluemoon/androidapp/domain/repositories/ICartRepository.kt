@@ -8,4 +8,6 @@ interface ICartRepository {
     suspend fun modifyCartItemQuantity(productId: Long, quantity: Int)
     suspend fun checkout()
 
+    suspend fun addProductToCart(productId: Long, quantity: Int)
+
 }

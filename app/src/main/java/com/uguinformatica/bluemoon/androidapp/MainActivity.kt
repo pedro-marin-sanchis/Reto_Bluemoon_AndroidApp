@@ -73,6 +73,7 @@ import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.DrawerViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ForgotPasswordViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.LoginViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.OrderViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ProductDetailViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ProductViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.RegisterViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
@@ -97,7 +98,7 @@ class MainActivity : ComponentActivity() {
                 val tradeViewModel: TradeViewModel by viewModels()
                 val forgotPasswordViewModel: ForgotPasswordViewModel by viewModels()
                 val productViewModel: ProductViewModel by viewModels()
-
+                val productDetailViewModel: ProductDetailViewModel by viewModels()
                 val drawerViewModel: DrawerViewModel by viewModels()
 
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -115,7 +116,8 @@ class MainActivity : ComponentActivity() {
                     tradeViewModel,
                     forgotPasswordViewModel,
                     productViewModel,
-                    drawerViewModel
+                    drawerViewModel,
+                    productDetailViewModel
                 )
             }
         }
@@ -135,7 +137,8 @@ fun MainScaffold(
     registerViewModel: RegisterViewModel,
     tradeViewModel: TradeViewModel,
     forgotPasswordViewModel: ForgotPasswordViewModel,
-    productViewModel: ProductViewModel
+    productViewModel: ProductViewModel,
+    productDetailViewModel: ProductDetailViewModel
 ) {
     var topAppBarState by remember { mutableStateOf(false) }
     var topAppBarTitle by remember { mutableStateOf("") }
@@ -180,6 +183,7 @@ fun MainScaffold(
                 topAppBarState = true
             }
             composable("ProductScreen") {
+                productViewModel.fetchProducts()
                 ProductScreen(paddingValues, navController, productViewModel)
                 topAppBarTitle = "Products"
                 cartButtonState = true
@@ -199,19 +203,15 @@ fun MainScaffold(
                 cartButtonState = false
                 topAppBarState = true
             }
-            composable("ProductDetailScreen/{image}/{name}/{description}/{price}",
+            composable("ProductDetailScreen/{id}",
                 arguments = listOf(
-                    navArgument("image") {type = NavType.IntType},
-                    navArgument("name") {type = NavType.StringType},
-                    navArgument("description") {type = NavType.StringType},
-                    navArgument("price") {type = NavType.FloatType}
+                    navArgument("id") {type = NavType.LongType},
+
                 )
             ){
-                val param1 = it.arguments?.getInt("image") ?: 0
-                val param2 = it.arguments?.getString("name") ?: ""
-                val param3 = it.arguments?.getString("description") ?: ""
-                val param4 = it.arguments?.getFloat("price") ?: 0f
-                ProductDetailScreen(param1,param2,param3,param4,paddingValues,navController)
+                val id = it.arguments?.getLong("id") ?: 0L
+                productDetailViewModel.fetchProduct(id)
+                ProductDetailScreen(id,paddingValues,navController, productDetailViewModel)
                 topAppBarTitle = "Product Detail"
                 cartButtonState = true
             }
@@ -276,7 +276,8 @@ private fun ModalNavigation(
     tradeViewModel: TradeViewModel,
     forgotPasswordViewModel: ForgotPasswordViewModel,
     productViewModel: ProductViewModel,
-    drawerViewModel: DrawerViewModel
+    drawerViewModel: DrawerViewModel,
+    productDetailViewModel: ProductDetailViewModel
 ) {
     val drawerState = drawerValue
     val snackbarHostState = remember { SnackbarHostState() }
@@ -419,7 +420,8 @@ private fun ModalNavigation(
             registerViewModel,
             tradeViewModel,
             forgotPasswordViewModel,
-            productViewModel
+            productViewModel,
+            productDetailViewModel
         )
     }
 }

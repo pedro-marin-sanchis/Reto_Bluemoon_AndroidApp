@@ -45,8 +45,8 @@ interface BlueMoonApiService {
     @GET("users/me/cart-items")
     suspend fun getCartItems(): Response<List<CartItemDTO>>
 
-    @GET("users/me/cart-items/{id}")
-    suspend fun getCartItem(  @Path("id") productId: Long): Response<CartItemDTO>
+/*    @GET("users/me/cart-items/{id}")
+    suspend fun getCartItem(  @Path("id") productId: Long): Response<CartItemDTO>*/
 
     @POST("users/me/cart-items")
     suspend fun addCartItem( @Body cartItem: AddCartItemDTO): Response<CartItemDTO>
@@ -82,6 +82,9 @@ interface BlueMoonApiService {
 
     @GET("products")
     suspend fun getProducts(): Response<List<ProductDTO>>
+
+    @GET("products/{id}")
+    suspend fun getProduct( @Path("id") productId: Long): Response<ProductDTO>
 
     // --- Silver Types ---
 

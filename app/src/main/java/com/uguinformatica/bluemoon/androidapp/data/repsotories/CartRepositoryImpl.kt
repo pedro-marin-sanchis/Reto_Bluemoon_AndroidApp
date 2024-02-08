@@ -1,6 +1,7 @@
 package com.uguinformatica.bluemoon.androidapp.data.repsotories
 
 import com.uguinformatica.bluemoon.androidapp.data.mappers.cartItemsDtoListToCartItemsList
+import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.AddCartItemDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CartItemDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CreateOrderDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.UpdateCartItemDTO
@@ -79,5 +80,15 @@ class CartRepositoryImpl @Inject constructor(
             throw Exception("Error while creating order")
         }
 
+    }
+
+    override suspend fun addProductToCart(productId: Long, quantity: Int) {
+        val response = blueMoonApi.addCartItem(AddCartItemDTO(productId, quantity))
+
+        if (!response.isSuccessful) {
+
+            // TODO: throw exception
+            throw Exception("Error while adding product to cart")
+        }
     }
 }
