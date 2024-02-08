@@ -64,7 +64,6 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.OrderScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
-import com.uguinformatica.bluemoon.androidapp.ui.screens.TradeHistoryScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
@@ -150,12 +149,6 @@ fun MyScaffold(
             composable("CartScreen") {
                 CartScreen(paddingValues, cartViewModel)
                 topAppBarTitle = "Cart"
-                cartButtonState = false
-                topAppBarState = true
-            }
-            composable("TradeHistoryScreen") {
-                TradeHistoryScreen()
-                topAppBarTitle = "History Trade"
                 cartButtonState = false
                 topAppBarState = true
             }
@@ -297,22 +290,6 @@ private fun MyModalNavigation(
                 )
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
-                    icon = { Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "History Trade") },
-                    label = { Text(text = "History Trade") },
-                    selected = isSelected == "History Trade",
-                    onClick = {
-                        isSelected = "History Trade"
-                        navController.navigate("TradeHistoryScreen")
-                        scope.launch {
-                            drawerState.apply {
-                                if (isOpen) close() else open()
-                            }
-                        }
-                    },
-                    colors = drawerItemColors()
-                )
-                NavigationDrawerItem(
-                    modifier = Modifier.padding(10.dp),
                     icon = { Icon(imageVector = Icons.Default.Close, contentDescription = "Close") },
                     label = { Text(text = "Close") },
                     selected = isSelected == "Close",
@@ -328,7 +305,7 @@ private fun MyModalNavigation(
                 )
                 Row(modifier = Modifier
                     .align(End)
-                    //.padding(top = 60.dp)
+                    .padding(top = 60.dp)
                     .clickable {
                         navController.navigate("LoginScreen")
                         scope.launch {
