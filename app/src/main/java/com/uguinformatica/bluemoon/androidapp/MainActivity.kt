@@ -1,5 +1,6 @@
 package com.uguinformatica.bluemoon.androidapp
 
+import TradeHistoryScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -152,6 +153,13 @@ fun MyScaffold(
                 cartButtonState = false
                 topAppBarState = true
             }
+            composable("TradeHistoryScreen") {
+                TradeHistoryScreen()
+                topAppBarTitle = "TradeHistoryScreen"
+                cartButtonState = true
+                topAppBarState = true
+            }
+
         }
     }
 }
@@ -290,6 +298,23 @@ private fun MyModalNavigation(
                 )
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
+                    icon = { Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "TradeHistoryScreen") },
+                    label = { Text(text = "TradeHistoryScreen") },
+                    selected = isSelected == "TradeHistoryScreen",
+                    onClick = {
+                        isSelected = "TradeHistoryScreen"
+                        navController.navigate("TradeHistoryScreen")
+                        scope.launch {
+                            drawerState.apply {
+                                if (isOpen) close() else open()
+                            }
+                        }
+                    },
+                    colors = drawerItemColors()
+                )
+
+                NavigationDrawerItem(
+                    modifier = Modifier.padding(10.dp),
                     icon = { Icon(imageVector = Icons.Default.Close, contentDescription = "Close") },
                     label = { Text(text = "Close") },
                     selected = isSelected == "Close",
@@ -303,9 +328,10 @@ private fun MyModalNavigation(
                     },
                     colors = drawerItemColors()
                 )
+
                 Row(modifier = Modifier
                     .align(End)
-                    .padding(top = 60.dp)
+                    //.padding(top = 60.dp)
                     .clickable {
                         navController.navigate("LoginScreen")
                         scope.launch {
