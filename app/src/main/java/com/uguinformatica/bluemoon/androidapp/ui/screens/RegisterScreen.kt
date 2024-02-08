@@ -26,10 +26,11 @@ import com.uguinformatica.bluemoon.androidapp.ui.components.RegisterComponents.P
 import com.uguinformatica.bluemoon.androidapp.ui.components.RegisterComponents.RegisterButton
 import com.uguinformatica.bluemoon.androidapp.ui.components.RegisterComponents.SurnameField
 import com.uguinformatica.bluemoon.androidapp.ui.components.RegisterComponents.UsernameField
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.RegisterViewModel
 
 
 @Composable
-fun RegisterScreen(navHostController: NavHostController) {
+fun RegisterScreen(navHostController: NavHostController, registerViewModel: RegisterViewModel) {
     // Contenido de RegisterScreen
     var usernameReg by remember { mutableStateOf("") }
     var passwordReg by remember { mutableStateOf("") }

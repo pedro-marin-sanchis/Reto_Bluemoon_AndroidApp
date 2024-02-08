@@ -21,7 +21,6 @@ fun NotAccount(modifier: Modifier = Modifier, navHostController: NavHostControll
             modifier = Modifier.clickable { navHostController.navigate("RegisterScreen") },
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1834CE)
         )
     }
 }

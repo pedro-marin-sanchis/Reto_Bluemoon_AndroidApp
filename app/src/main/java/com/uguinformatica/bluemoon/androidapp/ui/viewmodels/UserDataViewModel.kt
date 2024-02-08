@@ -31,6 +31,7 @@ class UserDataViewModel @Inject constructor(
     private var _areFieldsEnabled = MutableLiveData(false)
     private var _emailOK = MutableLiveData(false)
     private var _showPassword = MutableLiveData(false)
+    private var _arePasswordFieldsEnabled = MutableLiveData(false)
 
     val name: LiveData<String> = _name
     val surname: LiveData<String> = _surname
@@ -40,6 +41,7 @@ class UserDataViewModel @Inject constructor(
     val confirmPassword: LiveData<String> = _confirmPassword
     val address: LiveData<String> = _address
     val areFieldsEnabled: LiveData<Boolean> = _areFieldsEnabled
+    val arePasswordFieldsEnabled: LiveData<Boolean> = _arePasswordFieldsEnabled
     val showPassword: LiveData<Boolean> = _showPassword
 
 

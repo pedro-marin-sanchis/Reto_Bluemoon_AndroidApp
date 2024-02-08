@@ -21,7 +21,6 @@ fun Logged(modifier: Modifier = Modifier, navHostController: NavHostController) 
             modifier = Modifier.clickable { navHostController.navigate("LoginScreen") },
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1834CE)
         )
     }
 }

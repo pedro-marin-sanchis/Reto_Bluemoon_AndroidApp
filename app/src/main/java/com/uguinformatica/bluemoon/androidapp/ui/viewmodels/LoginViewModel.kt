@@ -86,12 +86,11 @@ class LoginViewModel @Inject constructor(
         return _password.value != "" || _password.value != null
     }
 
-
     fun setUsername(username: String) {
-        _username.value = username
+        _username.postValue(username)
     }
 
     fun setPassword(password: String) {
-        _password.value = password
+        _password.postValue(password)
     }
 }

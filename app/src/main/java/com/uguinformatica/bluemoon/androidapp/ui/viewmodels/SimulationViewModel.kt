@@ -3,7 +3,9 @@ package com.uguinformatica.bluemoon.androidapp.ui.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 
+//@HiltViewModel
 class SimulationViewModel : ViewModel() {
 
     private var _weight = MutableLiveData("")
@@ -19,22 +21,22 @@ class SimulationViewModel : ViewModel() {
     val openAddItemDialog: LiveData<Boolean> = _openAddItemDialog
 
     fun setWeight(weight: String) {
-        _weight.value = weight
+        _weight.postValue(weight)
     }
 
     fun setDescription(description: String) {
-        _description.value = description
+        _description.postValue(description)
     }
 
     fun setSellPrice(sellPrice: String) {
-        _sellPrice.value = sellPrice
+        _sellPrice.postValue(sellPrice)
     }
 
     fun changeOpenAlertDialog(openAlertDialog: Boolean) {
-        _openAlertDialog.value = !openAlertDialog
+        _openAlertDialog.postValue(!openAlertDialog)
     }
 
     fun changeOpenAddItemDialog(openAddItemDialog: Boolean) {
-        _openAddItemDialog.value = !openAddItemDialog
+        _openAddItemDialog.postValue(!openAddItemDialog)
     }
 }

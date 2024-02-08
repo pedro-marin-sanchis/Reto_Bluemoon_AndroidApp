@@ -3,10 +3,11 @@ package com.uguinformatica.bluemoon.androidapp.ui.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.uguinformatica.bluemoon.androidapp.domain.models.CartItem
-import com.uguinformatica.bluemoon.androidapp.domain.usecase.CartUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import androidx.lifecycle.viewModelScope
+import com.uguinformatica.bluemoon.androidapp.domain.usecase.CartUseCase
+import com.uguinformatica.bluemoon.androidapp.domain.usecase.LoginUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
