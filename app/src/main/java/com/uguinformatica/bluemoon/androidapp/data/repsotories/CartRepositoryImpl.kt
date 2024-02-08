@@ -19,15 +19,9 @@ class CartRepositoryImpl @Inject constructor(
         if (!response.isSuccessful) {
             // TODO: throw exception
 
-            println("ERROR cart items")
-
-            println(response.code())
-            println(response.errorBody())
-
             throw Exception("Error while getting cart items")
         }
 
-        println("Cart items: ${response.body()}")
 
         return cartItemsDtoListToCartItemsList(response.body()!!)
     }
@@ -38,15 +32,9 @@ class CartRepositoryImpl @Inject constructor(
         if (!response.isSuccessful) {
             // TODO: throw exception
 
-            println("ERROR delete cart item")
-
-            println(response.code())
-            println(response.errorBody())
-
             throw Exception("Error while deleting cart item")
         }
 
-        println("Cart item deleted")
     }
 
     override suspend fun modifyCartItemQuantity(productId: Long, quantity: Int) {
@@ -55,15 +43,9 @@ class CartRepositoryImpl @Inject constructor(
         if (!response.isSuccessful) {
             // TODO: throw exception
 
-            println("ERROR delete cart item")
-
-            println(response.code())
-            println(response.errorBody())
-
             throw Exception("Error while updating cart item")
         }
 
-        println("Cart item updated")
     }
 
     override suspend fun checkout() {

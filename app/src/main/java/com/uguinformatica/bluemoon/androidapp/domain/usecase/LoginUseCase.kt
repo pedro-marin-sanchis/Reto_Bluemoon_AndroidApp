@@ -23,7 +23,6 @@ class LoginUseCase @Inject constructor(
             loginRepository.login(userLoginData)
 
         } catch (e: Exception) {
-            println("Error al obtener token!!!!")
             throw Exception("Error while getting token")
         }
 

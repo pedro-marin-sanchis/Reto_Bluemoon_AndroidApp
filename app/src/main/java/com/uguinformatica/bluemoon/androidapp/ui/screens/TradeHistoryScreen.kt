@@ -8,30 +8,24 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.uguinformatica.bluemoon.androidapp.R
+import com.uguinformatica.bluemoon.androidapp.domain.models.Trade
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.TradeViewModel
+import java.text.SimpleDateFormat
 
 @Composable
-fun TradeHistoryScreen() {
-    val tradeHistoryList = listOf(
-        Trade("02/02/2024", "456 Elm St", item = "Ring", false),
-        Trade("03/02/2024", "789 Oak St", item = "Ring", true),
-        Trade("03/02/2024", "789 Oak St", item = "Ring", false),
-        Trade("03/02/2024", "789 Oak St", item = "Ring", true),
-        Trade("03/02/2024", "789 Oak St", item = "Ring", false),
-        Trade("03/02/2024", "789 Oak St", item = "Ring", true),
-        Trade("03/02/2024", "789 Oak St", item = "Ring", true),
-        Trade("03/02/2024", "789 Oak St", item = "Ring",true),
-        Trade("03/02/2024", "789 Oak St", item = "Ring",true),
-    )
+fun TradeHistoryScreen(tradesViewModel:TradeViewModel) {
+    val trades by tradesViewModel.tradesList.observeAsState(initial = emptyList())
 
     LazyColumn {
         item {
             Spacer(modifier = Modifier.height(60.dp)) // Height of top app bar
         }
-        items(tradeHistoryList) { trade ->
+        items(trades) { trade ->
             TradeCard(trade)
         }
     }
@@ -59,15 +53,14 @@ fun TradeCard(trade: Trade) {
                     .padding(end = 16.dp)
             )
             Column {
-                Text(text = trade.date)
-                Text(text = trade.address)
-                Text(text = trade.item)
+                Text(text = SimpleDateFormat("dd/MM/yyyy").format(trade.date))
+                Text(text = "This trade has ${if (trade.validated) "been validated" else "not been validated"}")
             }
         }
     }
 
     if (showDialog.value) {
-        ValidationDialog(trade.isValidated) {
+        ValidationDialog(trade.validated) {
             showDialog.value = false
         }
     }

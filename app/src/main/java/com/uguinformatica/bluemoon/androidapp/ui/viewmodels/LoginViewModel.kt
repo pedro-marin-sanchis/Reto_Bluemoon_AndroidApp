@@ -75,16 +75,13 @@ class LoginViewModel @Inject constructor(
                 val loginData = UserLogin(_username.value!!, _password.value!!)
 
                 try {
-                    println("Trying to login")
                     loginUseCase.login(loginData)
-                    println("Loged")
                     _isLoged.postValue(true)
 
                     _username.postValue("")
                     _password.postValue("")
 
                 } catch (e: Exception) {
-                    println("Not Loged")
                     _isLoged.postValue(false)
                 }
             }

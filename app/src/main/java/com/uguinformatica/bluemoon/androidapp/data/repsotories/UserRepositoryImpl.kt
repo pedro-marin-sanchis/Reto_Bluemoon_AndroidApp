@@ -18,7 +18,6 @@ class UserRepositoryImpl @Inject constructor(
 
         if (!response.isSuccessful){
             // TODO: throw exception
-            println("ERROR user")
 
             throw Exception("Error while getting user")
         }
@@ -36,10 +35,7 @@ class UserRepositoryImpl @Inject constructor(
         if (!response.isSuccessful){
 
             // TODO: throw exception
-            println("ERROR update user")
 
-            println(response.code())
-            println(response.errorBody())
             throw Exception("Error while updating user")
         }
 
@@ -53,10 +49,6 @@ class UserRepositoryImpl @Inject constructor(
 
         if (!response.isSuccessful) {
             // TODO: throw exception
-            println("ERROR update password")
-
-            println(response.code())
-            println(response.errorBody())
 
             throw Exception("Error while updating password")
 

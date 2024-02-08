@@ -10,19 +10,17 @@ import javax.inject.Inject
 
 class OrderRepositoryImpl @Inject constructor(
     val bluemoonApi: BlueMoonApiService
-): IOrdersRepository {
+) : IOrdersRepository {
     override suspend fun getOrders(): List<Order> {
         val response = bluemoonApi.getOrders()
 
         if (!response.isSuccessful) {
             // TODO: Handle error
 
-            println(response.errorBody()!!.string())
 
             throw Exception("Error getting orders")
         }
 
-        println(response.body()!!)
         return orderDtoListToOrderList(response.body()!!)
     }
 }

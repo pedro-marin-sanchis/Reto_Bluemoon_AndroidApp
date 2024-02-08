@@ -156,9 +156,7 @@ fun MainScaffold(
 
         NavHost(navController = navController, startDestination = "LoginScreen" ) {
             composable("LoginScreen") {
-                println("isLoged: ${loginViewModel.isLoged.value}")
                 if (loginViewModel.checkAndSetIfLoged()) {
-                    println("navigate to ProductScreen")
                     navController.navigate("ProductScreen")
                 }
                 LoginScreen(navController, loginViewModel)
@@ -206,7 +204,8 @@ fun MainScaffold(
                 topAppBarState = true
             }
             composable("TradeHistoryScreen") {
-                TradeHistoryScreen()
+                tradeViewModel.fetchTradeList()
+                TradeHistoryScreen(tradeViewModel)
                 topAppBarTitle = "TradeHistoryScreen"
                 cartButtonState = true
                 topAppBarState = true

@@ -148,16 +148,6 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
 
             }
 
-            /*ModifierButton(onModifyButtonClick = {
-                if (areFieldsEnabled) {
-                    userDataViewModel.updateUser()
-                } else {
-                    userDataViewModel.enableModify()
-                }
-            })*/
-            ModifierButton(onModifyButtonClick = {
-                areFieldsEnabled = !areFieldsEnabled
-            })
         }
     }
 }
