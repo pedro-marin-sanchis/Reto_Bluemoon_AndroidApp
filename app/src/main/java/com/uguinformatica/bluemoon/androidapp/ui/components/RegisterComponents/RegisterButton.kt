@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
 @Composable
-fun RegisterButton(navHostController: NavHostController) {
+fun RegisterButton(navHostController: NavHostController, onRegister: () -> Unit) {
     Box(
         modifier = Modifier
             .width(200.dp)
@@ -21,7 +21,7 @@ fun RegisterButton(navHostController: NavHostController) {
         contentAlignment = Alignment.Center
     ) {
         Button(
-            onClick = { navHostController.navigate("LoginScreen") },
+            onClick = { onRegister() },
             modifier = Modifier
                 .fillMaxSize()
         ) {

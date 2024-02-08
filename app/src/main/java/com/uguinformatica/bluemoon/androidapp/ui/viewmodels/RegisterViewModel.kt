@@ -6,9 +6,19 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.uguinformatica.bluemoon.androidapp.domain.models.CreateUser
+import com.uguinformatica.bluemoon.androidapp.domain.usecase.UserUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-//@HiltViewModel
-class RegisterViewModel : ViewModel() {
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    val userUseCase: UserUseCase
+) : ViewModel() {
 
     private var _name = MutableLiveData("")
     private var _surname = MutableLiveData("")
@@ -32,6 +42,30 @@ class RegisterViewModel : ViewModel() {
     val emailOK: LiveData<Boolean> = _emailOK
     val showPassword: LiveData<Boolean> = _showPassword
 
+    fun register() {
+        println("registering user... via viewmodel")
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                println("registering user... via viewmodel in IO")
+                if (!checkFields()) {
+                    println("fields are not ok")
+                    return@withContext
+                }
+                val user = CreateUser(
+                    _username.value!!,
+                    _name.value!!,
+                    _address.value!!,
+                    _surname.value!!,
+                    _email.value!!,
+                    _password.value!!
+                )
+                println("registering user: $user")
+
+                userUseCase.registerUser(user)
+            }
+        }
+    }
+
     private fun disableModify() {
         _modify.value = false
     }
@@ -41,38 +75,55 @@ class RegisterViewModel : ViewModel() {
     }
 
     private fun checkName(): Boolean {
+        println("name: ${_name.value}")
+        if (_name.value == "") {
+            println("name is empty")
+        }
         return _name.value != ""
     }
 
     private fun checkSurname(): Boolean {
+        if (_surname.value == "") {
+            println("surname is empty")
+        }
+
         return _surname.value != ""
     }
 
     private fun checkUsername(): Boolean {
+        if (
+            _username.value == ""
+        ) {
+            println("username is empty")
+        }
         return _username.value != ""
     }
 
     private fun checkAddress(): Boolean {
+        if (_address.value == "") {
+            println("address is empty")
+        }
         return _address.value != ""
     }
 
-    private fun checkEmailOk(): Boolean {
-        return _emailOK.value == true
-    }
 
-    fun checkEmail(email: String) {
-        _emailOK.value = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
-    fun checkFields() {
-        if (checkName() && checkSurname() && checkUsername() &&
-            checkEmailOk() && arePasswordEquals() && checkAddress())
-        {
-            disableModify()
+    fun checkEmail(): Boolean {
+        if (_email.value == "" || _email.value == null) {
+            return false
         }
+
+        return Patterns.EMAIL_ADDRESS.matcher(_email.value!!).matches()
     }
 
-    fun changeHideNonePassword(none: VisualTransformation, hide: VisualTransformation): VisualTransformation {
+    fun checkFields(): Boolean {
+        return checkName() && checkSurname() && checkUsername() &&
+                checkEmail() && arePasswordEquals() && checkAddress()
+    }
+
+    fun changeHideNonePassword(
+        none: VisualTransformation,
+        hide: VisualTransformation
+    ): VisualTransformation {
         return if (_showPassword.value == true) {
             none
         } else {

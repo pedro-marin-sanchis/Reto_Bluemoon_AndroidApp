@@ -4,6 +4,7 @@ import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.AddCartIte
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CartItemDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CreateOrderDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CreateTradeDTO
+import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CreateUserDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.LoginDto
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.OrderDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.PasswordDTO
@@ -39,6 +40,9 @@ interface BlueMoonApiService {
 
     @PUT("users/me/password")
     suspend fun updatePassword( @Body password: PasswordDTO): Response<Unit>
+
+    @POST("users")
+    suspend fun createUser( @Body user: CreateUserDTO): Response<UserDTO>
 
     // --- Cart ---
 
