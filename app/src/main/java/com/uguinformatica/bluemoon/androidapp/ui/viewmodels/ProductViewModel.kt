@@ -25,6 +25,7 @@ class ProductViewModel @Inject constructor(
 
 
     fun fetchProducts(){
+        println("Fetching products")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val cartItems = productsUseCase.getProducts()

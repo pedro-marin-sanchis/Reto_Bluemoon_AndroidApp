@@ -19,6 +19,11 @@ import java.text.SimpleDateFormat
 
 @Composable
 fun TradeHistoryScreen(tradesViewModel:TradeViewModel) {
+
+    LaunchedEffect(key1 = {}){
+        tradesViewModel.fetchTradeList()
+    }
+
     val trades by tradesViewModel.tradesList.observeAsState(initial = emptyList())
 
     LazyColumn {

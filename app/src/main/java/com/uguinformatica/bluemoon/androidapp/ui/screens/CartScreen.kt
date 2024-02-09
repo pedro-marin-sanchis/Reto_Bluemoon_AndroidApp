@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -35,6 +36,9 @@ import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 @Composable
 fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
 
+    LaunchedEffect(key1 = {}){
+        cartViewModel.fetchCartItems()
+    }
     val productItems by cartViewModel.cartItems.observeAsState(emptyList())
 
     val openAlertDialogConfirm by cartViewModel.openAlertConfirm.observeAsState(false)

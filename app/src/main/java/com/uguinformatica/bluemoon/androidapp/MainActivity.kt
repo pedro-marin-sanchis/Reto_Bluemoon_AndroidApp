@@ -183,28 +183,29 @@ fun MainScaffold(
                 topAppBarState = true
             }
             composable("ProductScreen") {
-                productViewModel.fetchProducts()
+                println("Navigation to ProductScreen")
+//                productViewModel.fetchProducts()
                 ProductScreen(paddingValues, navController, productViewModel)
                 topAppBarTitle = "Products"
                 cartButtonState = true
                 topAppBarState = true
             }
             composable("OrderScreen") {
-                orderViewModel.getOrders()
+                //orderViewModel.getOrders()
                 OrderScreen(paddingValues, orderViewModel)
                 topAppBarTitle = "Orders"
                 cartButtonState = false
                 topAppBarState = true
             }
             composable("CartScreen") {
-                cartViewModel.fetchCartItems()
+                //cartViewModel.fetchCartItems()
                 CartScreen(paddingValues, cartViewModel)
                 topAppBarTitle = "Cart"
                 cartButtonState = false
                 topAppBarState = true
             }
             composable("TradeHistoryScreen") {
-                tradeViewModel.fetchTradeList()
+                //tradeViewModel.fetchTradeList()
                 TradeHistoryScreen(tradeViewModel)
                 topAppBarTitle = "TradeHistoryScreen"
                 cartButtonState = true

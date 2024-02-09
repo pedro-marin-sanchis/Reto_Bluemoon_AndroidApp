@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -27,6 +28,10 @@ fun ProductScreen(
     navHostController: NavHostController,
     productViewModel: ProductViewModel
 ) {
+
+    LaunchedEffect(key1 = {}){
+        productViewModel.fetchProducts()
+    }
     val products by productViewModel.productList.observeAsState(initial = emptyList())
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
