@@ -73,6 +73,7 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductDetailScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.TradeHistoryScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.DrawerViewModel
@@ -150,6 +151,7 @@ fun MainScaffold(
     var topAppBarTitle by remember { mutableStateOf("") }
     var cartButtonState by remember { mutableStateOf(false) }
 
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { if (topAppBarState) MainTopAppBar(drawerState, topAppBarTitle, navController, cartButtonState) }
@@ -186,8 +188,7 @@ fun MainScaffold(
                 topAppBarState = true
             }
             composable("ProductScreen") {
-                println("Navigation to ProductScreen")
-//                productViewModel.fetchProducts()
+                productViewModel.fetchProducts()
                 ProductScreen(paddingValues, navController, productViewModel)
                 topAppBarTitle = "Products"
                 cartButtonState = true
@@ -295,6 +296,7 @@ private fun ModalNavigation(
     val snackbarHostState = remember { SnackbarHostState() }
     var isSelected by remember { mutableStateOf("Products") }
     val scope = rememberCoroutineScope()
+
 
     ModalNavigationDrawer(
         gesturesEnabled = false,
@@ -419,6 +421,7 @@ private fun ModalNavigation(
 
                             }
                         }
+
                     },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End

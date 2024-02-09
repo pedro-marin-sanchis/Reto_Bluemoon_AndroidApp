@@ -1,3 +1,4 @@
+package com.uguinformatica.bluemoon.androidapp.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -88,5 +89,3 @@ fun ValidationDialog(isValidated: Boolean, onDismiss: () -> Unit) {
         }
     )
 }
-
-data class Trade(val date: String, val address: String, val item: String, val isValidated: Boolean)
