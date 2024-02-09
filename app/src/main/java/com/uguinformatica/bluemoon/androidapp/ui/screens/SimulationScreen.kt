@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.AlertDialog
@@ -269,7 +268,7 @@ private fun AddItemDialog(
 
         val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
-        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0f))
+        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0.0))
 
         var dropDownText by remember { mutableStateOf("Select silver type") }
 
@@ -347,7 +346,7 @@ private fun AddItemDialog(
                     }
                     TextButton(
                         onClick = {
-                            simulationViewModel.addTradeable(Tradeable(weight.toFloat(), description, weight.toFloat()*silverType.currentPrice, silverType))
+                            simulationViewModel.addTradeable(Tradeable(weight.toDouble(), description, weight.toFloat()*silverType.currentPrice, silverType))
                             simulationViewModel.calculateTotalTrade()
                             onConfirmation()
                         },
@@ -375,8 +374,8 @@ private fun ModifyItemDialog(
         val description by simulationViewModel.description.observeAsState(tradeable.description)
 
         val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf(
-            SilverType("asd", 23f),
-            SilverType("asdsad", 24f)
+            SilverType("asd", 23.0),
+            SilverType("asdsad", 24.0)
         ))
 
         val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)

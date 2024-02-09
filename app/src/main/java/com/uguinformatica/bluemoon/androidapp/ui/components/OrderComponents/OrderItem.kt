@@ -71,7 +71,7 @@ fun OrderItem(order: Order) {
                     DropdownMenuItem(
                         modifier = Modifier.padding(bottom = 6.dp),
                         text = {
-                            Text(text = "Name: ${it.name} \nPrice: ${it.price}$ \nQuantity: 45") },
+                            Text(text = "Name: ${it.product.name} \nPrice: ${it.product.price}$ \nQuantity: ${it.quantity}") },
                         onClick = { /*TODO*/ },
                         leadingIcon = {
                             Image(

@@ -12,7 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 class SimulationViewModel : ViewModel() {
 
     private var _tradeableItemList = MutableLiveData(mutableListOf<Tradeable>())
-    private var _tradeableItem = MutableLiveData(Tradeable(0f,"",null, SilverType("",0f)))
+    private var _tradeableItem = MutableLiveData(Tradeable(0.0,"",0.0, SilverType("",0.0)))
     private var _weight = MutableLiveData("")
     private var _description = MutableLiveData("")
     private var _silverTypeList = MutableLiveData(listOf<SilverType>())
@@ -87,7 +87,7 @@ class SimulationViewModel : ViewModel() {
     }
 
     fun modifyTradeable(tradeable: Tradeable) {
-        tradeable.weight = _weight.value?.toFloat()!!
+        tradeable.weight = _weight.value?.toDouble()!!
         tradeable.description = description.value!!
         tradeable.sellPrice = _weight.value?.toFloat()!! * _silverType.value?.currentPrice!!
         tradeable.sliverType = _silverType.value!!

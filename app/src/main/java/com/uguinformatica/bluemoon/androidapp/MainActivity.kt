@@ -3,7 +3,6 @@ package com.uguinformatica.bluemoon.androidapp
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import TradeHistoryScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
