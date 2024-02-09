@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.domain.models.Order
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
 fun OrderItem(order: Order) {
@@ -36,7 +38,7 @@ fun OrderItem(order: Order) {
             .padding(10.dp)
     ) {
         Text(
-            text = "Date: ${order.date}",
+            text = "Date: ${SimpleDateFormat("dd/MM/yyyy").format(order.date)}",
             fontSize = 20.sp,
             modifier = Modifier.padding(start = 10.dp)
         )

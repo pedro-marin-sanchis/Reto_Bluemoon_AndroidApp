@@ -25,13 +25,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.asLiveData
+import coil.compose.AsyncImage
 import com.uguinformatica.bluemoon.androidapp.dataStore
+import com.uguinformatica.bluemoon.androidapp.domain.models.CartItem
 import com.uguinformatica.bluemoon.androidapp.domain.models.Product
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 import kotlinx.coroutines.flow.map
 
 @Composable
-fun CartProductItem(product: Product, cartViewModel: CartViewModel) {
+fun CartProductItem(cartItem: CartItem, cartViewModel: CartViewModel) {
+
+    val product = cartItem.product
 
     Column {
         Card(
@@ -42,16 +46,16 @@ fun CartProductItem(product: Product, cartViewModel: CartViewModel) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Image(
-                    painter = painterResource(id = product.image),
+                AsyncImage(model = product.image, contentDescription = "Product Image", modifier = Modifier.size(80.dp))
+                    /*painter = painterResource(id = product.image),
                     contentDescription = "Product Image",
                     modifier = Modifier.size(80.dp)
-                )
+                )*/
 
                 Spacer(modifier = Modifier.padding(horizontal = 45.dp))
 
                 Text(
-                    text = product.name,
+                    text = "${product.name}   x ${cartItem.quantity}",
                     fontSize = 25.sp
                 )
             }
@@ -61,12 +65,12 @@ fun CartProductItem(product: Product, cartViewModel: CartViewModel) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 TextButton(
-                    onClick = { cartViewModel.openModifyDialog(); println("editar") },
+                    onClick = { cartViewModel.openModifyDialog(quantity = cartItem.quantity, productId = product.id); println("editar") },
                 ) {
                     Text(text = "Modify Quantity")
                 }
                 IconButton(
-                    onClick = { cartViewModel.openDeleteDialog() },
+                    onClick = { cartViewModel.openDeleteDialog(product.id) },
                 ){
                     Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete")
                 }

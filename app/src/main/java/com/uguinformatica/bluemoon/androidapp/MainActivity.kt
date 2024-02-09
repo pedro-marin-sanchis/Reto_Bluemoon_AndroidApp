@@ -55,12 +55,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -79,11 +73,14 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductDetailScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.TradeHistoryScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.DrawerViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ForgotPasswordViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.LoginViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.OrderViewModel
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ProductDetailViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ProductViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.RegisterViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
@@ -108,6 +105,8 @@ class MainActivity : ComponentActivity() {
                 val tradeViewModel: TradeViewModel by viewModels()
                 val forgotPasswordViewModel: ForgotPasswordViewModel by viewModels()
                 val productViewModel: ProductViewModel by viewModels()
+                val productDetailViewModel: ProductDetailViewModel by viewModels()
+                val drawerViewModel: DrawerViewModel by viewModels()
 
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val navController = rememberNavController()
@@ -123,7 +122,9 @@ class MainActivity : ComponentActivity() {
                     registerViewModel,
                     tradeViewModel,
                     forgotPasswordViewModel,
-                    productViewModel
+                    productViewModel,
+                    drawerViewModel,
+                    productDetailViewModel
                 )
             }
         }
@@ -144,11 +145,13 @@ fun MainScaffold(
     registerViewModel: RegisterViewModel,
     tradeViewModel: TradeViewModel,
     forgotPasswordViewModel: ForgotPasswordViewModel,
-    productViewModel: ProductViewModel
+    productViewModel: ProductViewModel,
+    productDetailViewModel: ProductDetailViewModel
 ) {
     var topAppBarState by remember { mutableStateOf(false) }
     var topAppBarTitle by remember { mutableStateOf("") }
     var cartButtonState by remember { mutableStateOf(false) }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -159,6 +162,9 @@ fun MainScaffold(
 
         NavHost(navController = navController, startDestination = "LoginScreen" ) {
             composable("LoginScreen") {
+                if (loginViewModel.checkAndSetIfLoged()) {
+                    navController.navigate("ProductScreen")
+                }
                 LoginScreen(navController, loginViewModel)
                 topAppBarState = false
             }
@@ -183,43 +189,43 @@ fun MainScaffold(
                 topAppBarState = true
             }
             composable("ProductScreen") {
+                productViewModel.fetchProducts()
                 ProductScreen(paddingValues, navController, productViewModel)
                 topAppBarTitle = "Products"
                 cartButtonState = true
                 topAppBarState = true
             }
             composable("OrderScreen") {
+                orderViewModel.getOrders()
                 OrderScreen(paddingValues, orderViewModel)
                 topAppBarTitle = "Orders"
                 cartButtonState = false
                 topAppBarState = true
             }
             composable("CartScreen") {
+                cartViewModel.fetchCartItems()
                 CartScreen(paddingValues, cartViewModel)
                 topAppBarTitle = "Cart"
                 cartButtonState = false
                 topAppBarState = true
             }
             composable("TradeHistoryScreen") {
-                TradeHistoryScreen()
+                tradeViewModel.fetchTradeList()
+                TradeHistoryScreen(tradeViewModel)
                 topAppBarTitle = "TradeHistoryScreen"
                 cartButtonState = true
                 topAppBarState = true
             }
 
-            composable("ProductDetailScreen/{image}/{name}/{description}/{price}",
+            composable("ProductDetailScreen/{id}",
                 arguments = listOf(
-                    navArgument("image") {type = NavType.IntType},
-                    navArgument("name") {type = NavType.StringType},
-                    navArgument("description") {type = NavType.StringType},
-                    navArgument("price") {type = NavType.FloatType}
+                    navArgument("id") {type = NavType.LongType},
+
                 )
             ){
-                val param1 = it.arguments?.getInt("image") ?: 0
-                val param2 = it.arguments?.getString("name") ?: ""
-                val param3 = it.arguments?.getString("description") ?: ""
-                val param4 = it.arguments?.getFloat("price") ?: 0f
-                ProductDetailScreen(param1,param2,param3,param4,paddingValues,navController)
+                val id = it.arguments?.getLong("id") ?: 0L
+                productDetailViewModel.fetchProduct(id)
+                ProductDetailScreen(id,paddingValues,navController, productDetailViewModel)
                 topAppBarTitle = "Product Detail"
                 cartButtonState = true
             }
@@ -283,12 +289,15 @@ private fun ModalNavigation(
     registerViewModel: RegisterViewModel,
     tradeViewModel: TradeViewModel,
     forgotPasswordViewModel: ForgotPasswordViewModel,
-    productViewModel: ProductViewModel
+    productViewModel: ProductViewModel,
+    drawerViewModel: DrawerViewModel,
+    productDetailViewModel: ProductDetailViewModel
 ) {
     val drawerState = drawerValue
     val snackbarHostState = remember { SnackbarHostState() }
     var isSelected by remember { mutableStateOf("Products") }
     val scope = rememberCoroutineScope()
+
 
     ModalNavigationDrawer(
         gesturesEnabled = false,
@@ -398,17 +407,21 @@ private fun ModalNavigation(
                     },
                     colors = drawerItemColors()
                 )
-
                 Row(modifier = Modifier
                     .align(End)
                     //.padding(top = 60.dp)
                     .clickable {
-                        navController.navigate("LoginScreen")
+                        drawerViewModel.logout()
+                        loginViewModel.setIsLoged(false)
+
                         scope.launch {
                             drawerState.apply {
                                 if (isOpen) close() else open()
+                                navController.navigate("LoginScreen")
+
                             }
                         }
+
                     },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End
@@ -441,6 +454,7 @@ private fun ModalNavigation(
             tradeViewModel,
             forgotPasswordViewModel,
             productViewModel,
+            productDetailViewModel
         )
     }
 }

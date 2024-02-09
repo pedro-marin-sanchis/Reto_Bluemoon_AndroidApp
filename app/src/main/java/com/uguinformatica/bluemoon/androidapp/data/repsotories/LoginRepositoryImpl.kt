@@ -14,6 +14,8 @@ import com.uguinformatica.bluemoon.androidapp.dataStore
 import com.uguinformatica.bluemoon.androidapp.domain.models.UserLogin
 import com.uguinformatica.bluemoon.androidapp.domain.repositories.ILoginRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
@@ -28,11 +30,11 @@ class LoginRepositoryImpl @Inject constructor(
 
         if (!response.isSuccessful) {
             // TODO: throw exception
-            println(response.errorBody()!!.string())
+
+            println(response.errorBody())
             println(response.code())
 
             throw Exception("Error while getting token")
-            return
         }
 
         val token = response.body()!!
@@ -40,5 +42,19 @@ class LoginRepositoryImpl @Inject constructor(
         context.dataStore.edit { settings ->
             settings[stringPreferencesKey("api_token")] = token.token
         }
+    }
+
+    override suspend fun logout() {
+        context.dataStore.edit { settings ->
+            settings.remove(stringPreferencesKey("api_token"))
+        }
+    }
+
+    override suspend fun isLogged(): Boolean {
+        val token = context.dataStore.data.map {
+            it[stringPreferencesKey("api_token")] ?: ""
+        }.first()
+
+        return token != ""
     }
 }

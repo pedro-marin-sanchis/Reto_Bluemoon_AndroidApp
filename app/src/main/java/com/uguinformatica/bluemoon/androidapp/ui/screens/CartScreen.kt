@@ -35,17 +35,19 @@ import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 @Composable
 fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
 
+    val productItems by cartViewModel.cartItems.observeAsState(emptyList())
+
     val openAlertDialogConfirm by cartViewModel.openAlertConfirm.observeAsState(false)
-
     val openAlertDialogDelete by cartViewModel.openAlertDelete.observeAsState(false)
-
     val openDialogModifyQuantity by cartViewModel.openDialogModify.observeAsState(false)
 
     when {
         openAlertDialogConfirm -> {
             AlertDialogConfirm(
                 onDismissRequest = { cartViewModel.closeConfirmDialog() },
-                onConfirmation = { cartViewModel.closeConfirmDialog() },
+                onConfirmation = {
+                    cartViewModel.checkout()
+                    cartViewModel.closeConfirmDialog() },
                 dialogTitle = "Confirm the order"
             )
         }
@@ -55,7 +57,10 @@ fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
         openAlertDialogDelete -> {
             AlertDialogDelete(
                 onDismissRequest = { cartViewModel.closeDeleteDialog() },
-                onConfirmation = { cartViewModel.closeDeleteDialog() },
+                onConfirmation = {
+                    cartViewModel.deleteCartItem()
+                    cartViewModel.closeDeleteDialog()
+                },
                 dialogTitle = "Delete product"
             )
         }
@@ -65,7 +70,9 @@ fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
         openDialogModifyQuantity -> {
             ModifyQuantityDialog(
                 onDismissRequest = { cartViewModel.closeModifyDialog() },
-                onConfirmation = { cartViewModel.closeModifyDialog() },
+                onConfirmation = {
+                    cartViewModel.updateCartItemQuantity()
+                    cartViewModel.closeModifyDialog() },
                 cartViewModel
             )
         }
@@ -80,7 +87,7 @@ fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(1),
             content = {
-                items(getProducts()) { index ->
+                items(productItems) { index ->
                     CartProductItem(index, cartViewModel)
                 }
                 item {
@@ -98,17 +105,6 @@ fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
     }
 }
 
-private fun getProducts(): List<Product> {
-    return listOf(
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.bluemoonlogo)
-    )
-}
-
 @Composable
 private fun AlertDialogConfirm(
     onDismissRequest: () -> Unit,
@@ -116,11 +112,13 @@ private fun AlertDialogConfirm(
     dialogTitle: String,
 ) {
     AlertDialog(
-        title = { Text(
-            text = dialogTitle,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) },
+        title = {
+            Text(
+                text = dialogTitle,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
         text = { Text(text = "Do you want to proceed to the payment?") },
         onDismissRequest = { onDismissRequest() },
         dismissButton = {
@@ -151,11 +149,13 @@ private fun AlertDialogDelete(
     dialogTitle: String,
 ) {
     AlertDialog(
-        title = { Text(
-            text = dialogTitle,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) },
+        title = {
+            Text(
+                text = dialogTitle,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
         text = { Text(text = "Are you sure to delete this product?") },
         onDismissRequest = { onDismissRequest() },
         dismissButton = {
@@ -183,11 +183,11 @@ private fun AlertDialogDelete(
 private fun ModifyQuantityDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
 
-        val quantity by cartViewModel.quantity.observeAsState("")
+        val quantity by cartViewModel.dialogQuantity.observeAsState("")
 
         Card(
             modifier = Modifier
@@ -209,8 +209,8 @@ private fun ModifyQuantityDialog(
                 )
 
                 TextField(
-                    value = quantity,
-                    onValueChange = { cartViewModel.setQuantity(quantity = it) },
+                    value = quantity.toString(),
+                    onValueChange = { cartViewModel.setQuantity(quantity = it.toIntOrNull() ?: 0) },
                     label = { Text(text = "Quantity") }
                 )
 

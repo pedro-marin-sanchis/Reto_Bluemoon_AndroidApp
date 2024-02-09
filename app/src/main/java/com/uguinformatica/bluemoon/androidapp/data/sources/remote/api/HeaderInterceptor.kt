@@ -24,7 +24,7 @@ class HeaderInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
-        if (originalRequest.url().encodedPath().endsWith("/api/login")) {
+        if (originalRequest.url.encodedPath.endsWith("/api/login")) {
             return chain.proceed(originalRequest)
         }
 

@@ -21,10 +21,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.uguinformatica.bluemoon.androidapp.domain.models.Product
+import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ProductViewModel
 
 @Composable
-fun ProductListItem(product: Product, navHostController: NavHostController) {
+fun ProductListItem(product: Product, navHostController: NavHostController, productViewModel: ProductViewModel) {
 
     val context = LocalContext.current
     val text = "The product was added successful"
@@ -35,14 +38,17 @@ fun ProductListItem(product: Product, navHostController: NavHostController) {
     Card(
         modifier = Modifier
             .padding(10.dp)
-            .clickable { navHostController.navigate(
-                "ProductDetailScreen/${product.image}/${product.name}/${product.description}/${product.price}"
-            ) }
+            .clickable {
+                navHostController.navigate(
+                    "ProductDetailScreen/${product.id}"
+                )
+            }
     ) {
-        Image(
+        AsyncImage(model = product.image, contentDescription = "")
+        /*Image(
             painter = painterResource(id = product.image),
             contentDescription = "Product Image"
-        )
+        )*/
 
         Text(
             text = product.name,
@@ -52,14 +58,20 @@ fun ProductListItem(product: Product, navHostController: NavHostController) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(top = 5.dp)
-            ) {
+        ) {
             Text(
                 text = "${product.price}$",
                 fontSize = 25.sp,
             )
             Spacer(modifier = Modifier.padding(horizontal = 20.dp))
-            IconButton(onClick = { toast.show() }) {
-                Icon(imageVector = Icons.Filled.AddShoppingCart, contentDescription = "Add to the cart")
+            IconButton(onClick = {
+                toast.show()
+                productViewModel.addProductToCart(product.id, 1)
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.AddShoppingCart,
+                    contentDescription = "Add to the cart"
+                )
             }
         }
     }

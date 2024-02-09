@@ -14,23 +14,21 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class ProductViewModel @Inject constructor(
+class ProductDetailViewModel @Inject constructor(
     val productsUseCase: ProductUseCase,
     val cartUseCase: CartUseCase
 ): ViewModel() {
 
-    private var _productsList = MutableLiveData(listOf<Product>())
+    private var _product = MutableLiveData<Product>()
 
-    val productList: LiveData<List<Product>> = _productsList
+    val product: LiveData<Product> = _product
 
-
-    fun fetchProducts(){
+    fun fetchProduct(productId: Long){
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val cartItems = productsUseCase.getProducts()
+                val cartItems = productsUseCase.getProduct(productId)
 
-                _productsList.postValue(cartItems)
-
+                _product.postValue(cartItems)
             }
         }
     }
@@ -42,4 +40,5 @@ class ProductViewModel @Inject constructor(
             }
         }
     }
+
 }

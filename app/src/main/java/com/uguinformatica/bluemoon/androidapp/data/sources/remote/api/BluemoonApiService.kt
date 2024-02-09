@@ -4,6 +4,7 @@ import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.AddCartIte
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CartItemDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CreateOrderDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CreateTradeDTO
+import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CreateUserDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.LoginDto
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.OrderDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.PasswordDTO
@@ -40,13 +41,16 @@ interface BlueMoonApiService {
     @PUT("users/me/password")
     suspend fun updatePassword( @Body password: PasswordDTO): Response<Unit>
 
+    @POST("users")
+    suspend fun createUser( @Body user: CreateUserDTO): Response<UserDTO>
+
     // --- Cart ---
 
     @GET("users/me/cart-items")
     suspend fun getCartItems(): Response<List<CartItemDTO>>
 
-    @GET("users/me/cart-items/{id}")
-    suspend fun getCartItem(  @Path("id") productId: Long): Response<CartItemDTO>
+/*    @GET("users/me/cart-items/{id}")
+    suspend fun getCartItem(  @Path("id") productId: Long): Response<CartItemDTO>*/
 
     @POST("users/me/cart-items")
     suspend fun addCartItem( @Body cartItem: AddCartItemDTO): Response<CartItemDTO>
@@ -82,6 +86,9 @@ interface BlueMoonApiService {
 
     @GET("products")
     suspend fun getProducts(): Response<List<ProductDTO>>
+
+    @GET("products/{id}")
+    suspend fun getProduct( @Path("id") productId: Long): Response<ProductDTO>
 
     // --- Silver Types ---
 

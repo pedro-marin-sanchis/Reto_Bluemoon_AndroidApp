@@ -6,32 +6,84 @@ import androidx.lifecycle.ViewModel
 import com.uguinformatica.bluemoon.androidapp.domain.models.CartItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.lifecycle.viewModelScope
+import com.uguinformatica.bluemoon.androidapp.domain.usecase.CartUseCase
 import com.uguinformatica.bluemoon.androidapp.domain.usecase.LoginUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-//@HiltViewModel
-class CartViewModel : ViewModel() {
+@HiltViewModel
+class CartViewModel @Inject constructor(
+    val cartUseCase: CartUseCase
+) : ViewModel() {
 
-    private var _cartItemsList = MutableLiveData(listOf<CartItem>())
-    private var _quantity = MutableLiveData("")
+    private var _cartItems = MutableLiveData<List<CartItem>>(emptyList())
+    private var _dialogQuantity = MutableLiveData<Int>(0)
     private var _openAlertDialogDelete = MutableLiveData(false)
     private var _openModifyQuantityDialog = MutableLiveData(false)
     private var _openAlertDialogConfirm = MutableLiveData(false)
 
-    val cartItemsList: LiveData<List<CartItem>> = _cartItemsList
-    val quantity: LiveData<String> = _quantity
+    val cartItems: LiveData<List<CartItem>> = _cartItems
+    val dialogQuantity: LiveData<Int> = _dialogQuantity
     val openAlertConfirm: LiveData<Boolean> = _openAlertDialogConfirm
     val openAlertDelete: LiveData<Boolean> = _openAlertDialogDelete
     val openDialogModify: LiveData<Boolean> = _openModifyQuantityDialog
 
-    fun setQuantity(quantity: String) {
-        _quantity.value = quantity
+    var productIdToDelete: Long? = null
+
+    var productIdToModify: Long? = null
+    var newQuantity: Int? = null
+
+
+    fun checkout() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                cartUseCase.checkout()
+                fetchCartItems()
+            }
+        }
+    }
+    fun fetchCartItems() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val cartItems = cartUseCase.getCartItems()
+
+                _cartItems.postValue(cartItems)
+
+            }
+        }
     }
 
-    fun openDeleteDialog() {
+    fun deleteCartItem() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                if (productIdToDelete != null) {
+                    cartUseCase.deleteCartItem(productIdToDelete!!)
+                    fetchCartItems()
+                }
+
+            }
+        }
+    }
+
+    fun updateCartItemQuantity() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                if (productIdToModify != null && _dialogQuantity.value != null) {
+                    cartUseCase.modifyCartItemQuantity(productIdToModify!!, _dialogQuantity.value!!)
+                    fetchCartItems()
+                }
+            }
+        }
+    }
+
+    fun setQuantity(quantity: Int) {
+        _dialogQuantity.value = quantity
+    }
+
+    fun openDeleteDialog(productId: Long) {
+        productIdToDelete = productId
         _openAlertDialogDelete.value = true
     }
 
@@ -39,7 +91,9 @@ class CartViewModel : ViewModel() {
         _openAlertDialogConfirm.value = true
     }
 
-    fun openModifyDialog() {
+    fun openModifyDialog(quantity: Int, productId: Long) {
+        productIdToModify = productId
+        _dialogQuantity.postValue(quantity)
         _openModifyQuantityDialog.value = true
     }
 

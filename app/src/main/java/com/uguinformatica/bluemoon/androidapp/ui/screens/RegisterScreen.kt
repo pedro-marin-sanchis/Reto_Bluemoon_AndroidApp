@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,13 +33,13 @@ import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.RegisterViewModel
 @Composable
 fun RegisterScreen(navHostController: NavHostController, registerViewModel: RegisterViewModel) {
     // Contenido de RegisterScreen
-    var usernameReg by remember { mutableStateOf("") }
-    var passwordReg by remember { mutableStateOf("") }
-    var confirmpassword by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var surname by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    val usernameReg by registerViewModel.username.observeAsState(initial = "")
+    val passwordReg by registerViewModel.password.observeAsState(initial = "")
+    val confirmpassword by registerViewModel.confirmPassword.observeAsState(initial = "")
+    val name by registerViewModel.name.observeAsState(initial = "")
+    val surname by registerViewModel.surname.observeAsState(initial = "")
+    val address by registerViewModel.address.observeAsState(initial = "")
+    val email by registerViewModel.email.observeAsState(initial = "")
 
     val scrollState = rememberScrollState()
 
@@ -56,32 +57,32 @@ fun RegisterScreen(navHostController: NavHostController, registerViewModel: Regi
             HeaderImageRegister(Modifier.align(Alignment.CenterHorizontally))
             Spacer(modifier = Modifier.padding(12.dp))
 
-            NameField(name) { newName -> name = newName }
+            NameField(name) { newName -> registerViewModel.setName(newName) }
             Spacer(modifier = Modifier.padding(12.dp))
 
-            SurnameField(surname) { newSurname -> surname = newSurname }
+            SurnameField(surname) { newSurname -> registerViewModel.setSurname(newSurname) }
             Spacer(modifier = Modifier.padding(12.dp))
 
-            EmailField(email) { newEmail -> email = newEmail }
+            EmailField(email) { newEmail -> registerViewModel.setEmail(newEmail) }
             Spacer(modifier = Modifier.padding(12.dp))
 
-            UsernameField(usernameReg) { newUsername -> usernameReg = newUsername }
+            UsernameField(usernameReg) { newUsername -> registerViewModel.setUsername(newUsername) }
             Spacer(modifier = Modifier.padding(12.dp))
 
             PasswordRegisterField(passwordReg) { newPassword ->
-                passwordReg = newPassword
+                registerViewModel.setPassword(newPassword)
             }
             Spacer(modifier = Modifier.padding(12.dp))
 
             ConfirmPasswordField(confirmpassword) { newConfirmPassword ->
-                confirmpassword = newConfirmPassword
+                registerViewModel.setConfirmPassword(newConfirmPassword)
             }
             Spacer(modifier = Modifier.padding(12.dp))
 
-            AddressField(address) { newAddress -> address = newAddress }
+            AddressField(address) { newAddress -> registerViewModel.setAddress(newAddress) }
             Spacer(modifier = Modifier.padding(12.dp))
 
-            RegisterButton(navHostController)
+            RegisterButton(navHostController) { registerViewModel.register() }
             Spacer(modifier = Modifier.padding(12.dp))
 
             Logged(Modifier.align(Alignment.End), navHostController)

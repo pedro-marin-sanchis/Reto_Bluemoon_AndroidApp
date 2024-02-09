@@ -4,5 +4,7 @@ import java.util.Date
 
 data class TradeDTO(
     val id: Int,
+    val date: Date,
+    val validated: Boolean,
     val tradeables: List<TradeableDTO>
 )

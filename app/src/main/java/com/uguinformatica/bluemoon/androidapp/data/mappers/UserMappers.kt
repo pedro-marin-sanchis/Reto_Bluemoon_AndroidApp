@@ -1,8 +1,10 @@
 package com.uguinformatica.bluemoon.androidapp.data.mappers
 
+import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CreateUserDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.LoginDto
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.PasswordDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.UserDTO
+import com.uguinformatica.bluemoon.androidapp.domain.models.CreateUser
 import com.uguinformatica.bluemoon.androidapp.domain.models.User
 import com.uguinformatica.bluemoon.androidapp.domain.models.UserLogin
 
@@ -38,5 +40,16 @@ fun userLoginToUserLoginDto(userLogin: UserLogin): LoginDto {
 fun userToPasswordDto(user: User): PasswordDTO {
     return PasswordDTO(
         password = user.password!!
+    )
+}
+
+fun createUserToCreateUserDto (createUser: CreateUser): CreateUserDTO {
+    return CreateUserDTO(
+        username = createUser.username,
+        password = createUser.password,
+        name = createUser.name,
+        surnames = createUser.surnames,
+        address = createUser.address,
+        email = createUser.email,
     )
 }

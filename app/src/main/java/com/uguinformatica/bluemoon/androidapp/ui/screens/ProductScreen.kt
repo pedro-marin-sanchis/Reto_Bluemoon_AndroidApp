@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -25,26 +27,16 @@ fun ProductScreen(
     navHostController: NavHostController,
     productViewModel: ProductViewModel
 ) {
+    val products by productViewModel.productList.observeAsState(initial = emptyList())
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         content = {
-            getProducts().let {
-                items(it) {index ->
-                    ProductListItem(product = index, navHostController)
-                }
-            } },
+            items(products) { index ->
+                ProductListItem(product = index, navHostController, productViewModel)
+            }
+        },
         modifier = Modifier.padding(paddingValues),
         userScrollEnabled = true
     )
 }
 
-private fun getProducts(): List<Product> {
-    return listOf(
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo),
-        Product("Ring", "Silver Ring", 49.99f, R.drawable.anillo)
-    )
-}

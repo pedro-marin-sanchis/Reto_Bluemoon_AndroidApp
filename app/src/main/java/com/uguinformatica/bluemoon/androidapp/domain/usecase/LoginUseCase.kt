@@ -23,9 +23,16 @@ class LoginUseCase @Inject constructor(
             loginRepository.login(userLoginData)
 
         } catch (e: Exception) {
-            println("Error al obtener token!!!!")
             throw Exception("Error while getting token")
         }
 
+    }
+
+    suspend fun logout() {
+        loginRepository.logout()
+    }
+
+    suspend fun isLogged(): Boolean {
+        return loginRepository.isLogged()
     }
 }
