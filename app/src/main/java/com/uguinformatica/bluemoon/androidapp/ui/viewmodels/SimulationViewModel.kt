@@ -16,19 +16,23 @@ class SimulationViewModel : ViewModel() {
     private var _description = MutableLiveData("")
     private var _sellPrice = MutableLiveData("")
     private var _silverTypeList = MutableLiveData(listOf<SilverType>())
+    private var _silverType = MutableLiveData<SilverType>(null)
     private var _openAlertDialog = MutableLiveData(false)
     private var _openAddItemDialog = MutableLiveData(false)
     private var _openModifyItemDialog = MutableLiveData(false)
+    private var _showSilverTypeList = MutableLiveData(false)
 
     val weight: LiveData<String> = _weight
     val description: LiveData<String> = _description
     val sellPrice: LiveData<String> = _sellPrice
     val silverTypeList: LiveData<List<SilverType>> = _silverTypeList
+    val silverType: LiveData<SilverType> = _silverType
     val openAlertDialog:LiveData<Boolean> = _openAlertDialog
     val openAddItemDialog: LiveData<Boolean> = _openAddItemDialog
     val tradeableItemList: LiveData<MutableList<Tradeable>> = _tradeableItemList
     val tradeableItem: LiveData<Tradeable> = _tradeableItem
     val openModifyItemDialog: LiveData<Boolean> = _openModifyItemDialog
+    val showSilverTypeList: LiveData<Boolean> = _showSilverTypeList
 
     fun setWeight(weight: String) {
         _weight.postValue(weight)
@@ -54,6 +58,10 @@ class SimulationViewModel : ViewModel() {
         _openAddItemDialog.postValue(!openAddItemDialog)
     }
 
+    fun changeShowSilverTypeList(showSilverType: Boolean) {
+        _showSilverTypeList.postValue(!showSilverType)
+    }
+
     fun changeOpenModifyItemDialog(openModifyItemDialog: Boolean, tradeable: Tradeable) {
         _tradeableItem.value = tradeable
         setWeight(tradeable.weight.toString())
@@ -63,6 +71,14 @@ class SimulationViewModel : ViewModel() {
 
     fun changeTradeable(tradeable: Tradeable) {
         _tradeableItem.postValue(tradeable)
+    }
+
+    fun setSilverType(silverType: SilverType) {
+        _tradeableItem.value?.sliverType = silverType
+    }
+
+    fun changeSilverType(silverType: SilverType) {
+        _silverType.postValue(silverType)
     }
 
     fun deleteTradeable(tradeable: Tradeable) {

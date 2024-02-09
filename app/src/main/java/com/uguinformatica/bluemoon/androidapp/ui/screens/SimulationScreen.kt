@@ -266,9 +266,9 @@ private fun AddItemDialog(
 
         val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf())
 
-        var showSilverType by remember { mutableStateOf(false) }
+        val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
-        var silverType by remember { mutableStateOf(SilverType("", 0f)) }
+        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0f))
 
         Card(
             modifier = Modifier
@@ -307,7 +307,7 @@ private fun AddItemDialog(
 
                 Row(
                     modifier = Modifier
-                        .clickable { showSilverType = !showSilverType }
+                        .clickable { simulationViewModel.changeShowSilverTypeList(showSilverType) }
                         .padding(start = 15.dp),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
@@ -321,7 +321,10 @@ private fun AddItemDialog(
                         silverTypeList.map {
                             DropdownMenuItem(text = {
                                 Text(text = "${it.name} | ${it.currentPrice}")
-                            }, onClick = { silverType = it })
+                            }, onClick = {
+                                simulationViewModel.changeSilverType(it)
+                                simulationViewModel.changeShowSilverTypeList(showSilverType)
+                            })
                         }
                     }
                 }
@@ -368,11 +371,14 @@ private fun ModifyItemDialog(
 
         val sellPrice by simulationViewModel.sellPrice.observeAsState()
 
-        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf())
+        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf(
+            SilverType("asd", 23f),
+            SilverType("asdsad", 24f)
+        ))
 
-        var showSilverType by remember { mutableStateOf(false) }
+        val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
-        var silverType by remember { mutableStateOf(SilverType("", 0f)) }
+        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0f))
 
         Card(
             modifier = Modifier
@@ -411,7 +417,7 @@ private fun ModifyItemDialog(
 
                 Row(
                     modifier = Modifier
-                        .clickable { showSilverType = !showSilverType }
+                        .clickable { simulationViewModel.changeShowSilverTypeList(showSilverType) }
                         .padding(start = 15.dp),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
@@ -425,7 +431,10 @@ private fun ModifyItemDialog(
                         silverTypeList.map {
                             DropdownMenuItem(text = {
                                 Text(text = "${it.name} | ${it.currentPrice}")
-                            }, onClick = { silverType = it })
+                            }, onClick = {
+                                simulationViewModel.setSilverType(it)
+                                simulationViewModel.changeShowSilverTypeList(showSilverType)
+                            })
                         }
                     }
                 }

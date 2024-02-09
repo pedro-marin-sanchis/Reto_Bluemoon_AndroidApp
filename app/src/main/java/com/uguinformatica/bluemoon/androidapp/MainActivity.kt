@@ -24,6 +24,8 @@ import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.Shop
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
