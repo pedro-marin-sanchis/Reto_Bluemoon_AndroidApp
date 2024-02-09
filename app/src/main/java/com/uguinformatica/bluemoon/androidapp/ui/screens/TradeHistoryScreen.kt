@@ -1,3 +1,4 @@
+package com.uguinformatica.bluemoon.androidapp.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +20,11 @@ import java.text.SimpleDateFormat
 
 @Composable
 fun TradeHistoryScreen(tradesViewModel:TradeViewModel) {
+
+    LaunchedEffect(key1 = {}){
+        tradesViewModel.fetchTradeList()
+    }
+
     val trades by tradesViewModel.tradesList.observeAsState(initial = emptyList())
 
     LazyColumn {
@@ -83,5 +89,3 @@ fun ValidationDialog(isValidated: Boolean, onDismiss: () -> Unit) {
         }
     )
 }
-
-data class Trade(val date: String, val address: String, val item: String, val isValidated: Boolean)

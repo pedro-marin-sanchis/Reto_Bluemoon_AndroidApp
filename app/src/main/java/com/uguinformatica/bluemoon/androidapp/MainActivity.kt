@@ -1,7 +1,6 @@
 package com.uguinformatica.bluemoon.androidapp
 
 import android.annotation.SuppressLint
-import TradeHistoryScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -69,6 +68,7 @@ import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductDetailScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.ProductScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.RegisterScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.SimulationScreen
+import com.uguinformatica.bluemoon.androidapp.ui.screens.TradeHistoryScreen
 import com.uguinformatica.bluemoon.androidapp.ui.screens.UserDataScreen
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.DrawerViewModel
