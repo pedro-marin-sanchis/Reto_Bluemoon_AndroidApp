@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -54,11 +55,15 @@ import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 @Composable
 fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: SimulationViewModel) {
 
+    LaunchedEffect(key1 = {}){
+        simulationViewModel.fetchSilverTypes()
+    }
+
     val openAlertDialog by simulationViewModel.openAlertDialog.observeAsState(false)
     val openAddItemDialog by simulationViewModel.openAddItemDialog.observeAsState(false)
     val openModifyItemDialog by simulationViewModel.openModifyItemDialog.observeAsState(false)
     val tradeableItemList by simulationViewModel.tradeableItemList.observeAsState(listOf())
-    val tradeableItem by simulationViewModel.tradeableItem.observeAsState()
+    val tradeableItem by simulationViewModel.tradeableItem.observeAsState(Tradeable(0.0,"",0.0, SilverType("",0.0, 0)))
     var alertDialogText by remember { mutableStateOf("") }
 
     when {
@@ -68,7 +73,13 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
                 onConfirmation = {
                     if (alertDialogText != "Are you sure to do this trade?") {
                         simulationViewModel.deleteTradeable(tradeableItem!!)
+
                     }
+
+                    if (alertDialogText == "Are you sure to do this trade?") {
+                        simulationViewModel.crateTrade()
+                    }
+
                     simulationViewModel.changeOpenAlertDialog(openAlertDialog)
                 },
                 dialogTitle = "Confirm trade",
@@ -268,7 +279,7 @@ private fun AddItemDialog(
 
         val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
-        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0f))
+        var silverType by remember { mutableStateOf(SilverType("", 0.0, 0)) }
 
         Card(
             modifier = Modifier
@@ -343,7 +354,7 @@ private fun AddItemDialog(
                     }
                     TextButton(
                         onClick = {
-                            simulationViewModel.addTradeable(Tradeable(weight.toFloat(), description, null, silverType))
+                            simulationViewModel.addTradeable(Tradeable(weight.toDouble(), description, weight.toDouble()*silverType.currentPrice, silverType))
                             onConfirmation()
                         },
                         modifier = Modifier.padding(8.dp),
@@ -371,14 +382,11 @@ private fun ModifyItemDialog(
 
         val sellPrice by simulationViewModel.sellPrice.observeAsState()
 
-        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf(
-            SilverType("asd", 23f),
-            SilverType("asdsad", 24f)
-        ))
+        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(emptyList())
 
         val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
-        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0f))
+        var silverType by remember { mutableStateOf(SilverType("", 0.0, 0)) }
 
         Card(
             modifier = Modifier

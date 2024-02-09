@@ -31,8 +31,9 @@ class LoginRepositoryImpl @Inject constructor(
         if (!response.isSuccessful) {
             // TODO: throw exception
 
-            println(response.errorBody())
+            println(response.errorBody()!!.string())
             println(response.code())
+
 
             throw Exception("Error while getting token")
         }

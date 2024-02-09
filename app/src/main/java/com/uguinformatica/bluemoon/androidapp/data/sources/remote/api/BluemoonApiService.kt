@@ -79,8 +79,8 @@ interface BlueMoonApiService {
     @GET("users/me/trades/{id}")
     suspend fun getTrade( @Path("id") tradeId: Long): Response<TradeDTO>
 
-    @POST("trades")
-    suspend fun addTrade( @Body trade: CreateTradeDTO): Response<TradeDTO>
+    @POST("users/me/trades")
+    suspend fun addTrade( @Body trade: CreateTradeDTO): Response<Unit>
 
     // --- Products ---
 
