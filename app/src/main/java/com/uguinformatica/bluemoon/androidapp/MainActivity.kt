@@ -1,6 +1,8 @@
 package com.uguinformatica.bluemoon.androidapp
 
 import android.annotation.SuppressLint
+import android.app.Application
+import android.content.Context
 import TradeHistoryScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -145,7 +147,6 @@ fun MainScaffold(
     var topAppBarState by remember { mutableStateOf(false) }
     var topAppBarTitle by remember { mutableStateOf("") }
     var cartButtonState by remember { mutableStateOf(false) }
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -293,7 +294,6 @@ private fun ModalNavigation(
     var isSelected by remember { mutableStateOf("Products") }
     val scope = rememberCoroutineScope()
 
-
     ModalNavigationDrawer(
         gesturesEnabled = false,
         drawerState = drawerState,
@@ -402,6 +402,7 @@ private fun ModalNavigation(
                     },
                     colors = drawerItemColors()
                 )
+
                 Row(modifier = Modifier
                     .align(End)
                     //.padding(top = 60.dp)
@@ -416,7 +417,6 @@ private fun ModalNavigation(
 
                             }
                         }
-
                     },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End

@@ -1,6 +1,7 @@
 package com.uguinformatica.bluemoon.androidapp.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,14 +13,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CurrencyExchange
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -28,12 +36,18 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.uguinformatica.bluemoon.androidapp.domain.models.SilverType
+import com.uguinformatica.bluemoon.androidapp.domain.models.Tradeable
+import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_inverseOnSurface
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_primaryContainer
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 
@@ -42,14 +56,23 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
 
     val openAlertDialog by simulationViewModel.openAlertDialog.observeAsState(false)
     val openAddItemDialog by simulationViewModel.openAddItemDialog.observeAsState(false)
+    val openModifyItemDialog by simulationViewModel.openModifyItemDialog.observeAsState(false)
+    val tradeableItemList by simulationViewModel.tradeableItemList.observeAsState(listOf())
+    val tradeableItem by simulationViewModel.tradeableItem.observeAsState()
+    var alertDialogText by remember { mutableStateOf("") }
 
     when {
         openAlertDialog -> {
-            AlertDialogConfirm(
+            AlertDialog(
                 onDismissRequest = { simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
                 onConfirmation = {
-                    simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
+                    if (alertDialogText != "Are you sure to do this trade?") {
+                        simulationViewModel.deleteTradeable(tradeableItem!!)
+                    }
+                    simulationViewModel.changeOpenAlertDialog(openAlertDialog)
+                },
                 dialogTitle = "Confirm trade",
+                dialogText = alertDialogText,
                 simulationViewModel
             )
         }
@@ -58,10 +81,39 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
     when {
         openAddItemDialog -> {
             AddItemDialog(
-                onDismissRequest = { simulationViewModel.changeOpenAddItemDialog(openAddItemDialog) },
-                onConfirmation = { simulationViewModel.changeOpenAddItemDialog(openAddItemDialog) },
+                onDismissRequest = {
+                    simulationViewModel.setWeight("")
+                    simulationViewModel.setDescription("")
+                    simulationViewModel.changeOpenAddItemDialog(openAddItemDialog)
+                },
+                onConfirmation = {
+                    simulationViewModel.setWeight("")
+                    simulationViewModel.setDescription("")
+                    simulationViewModel.changeOpenAddItemDialog(openAddItemDialog)
+                },
                 simulationViewModel
             )
+        }
+    }
+
+    when {
+        openModifyItemDialog -> {
+            tradeableItem?.let {
+                ModifyItemDialog(
+                    onDismissRequest = { tradeableItem?.let {
+                        simulationViewModel.changeOpenModifyItemDialog(openModifyItemDialog,
+                            it
+                        )
+                    } },
+                    onConfirmation = { tradeableItem?.let {
+                        simulationViewModel.changeOpenModifyItemDialog(openModifyItemDialog,
+                            it
+                        )
+                    } },
+                    simulationViewModel,
+                    it
+                )
+            }
         }
     }
 
@@ -80,8 +132,48 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
                     shape = RoundedCornerShape(30.dp)
                 ),
         ) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                tradeableItemList.map {
+                    Card(
+                        modifier = Modifier
+                            //.size(width = 300.dp)
+                            .padding(top = 10.dp, bottom = 10.dp),
+                        colors = CardDefaults.cardColors(md_theme_light_inverseOnSurface)
+                    ) {
+                        Text(
+                            text = "Weight: ${it.weight} \n" +
+                                    "Description: ${it.description} \n" +
+                                    "Sell Price: ${it.sellPrice} \n" +
+                                    "Silver Type: ${it.sliverType.name}",
+                            modifier = Modifier.padding(start = 6.dp)
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            TextButton(onClick = { simulationViewModel.changeOpenModifyItemDialog(openModifyItemDialog, it) }) {
+                                Text(text = "Modify")
+                            }
+                            IconButton(onClick = {
+                                alertDialogText = "Are you sure to delete this trade item?"
+                                simulationViewModel.changeTradeable(it)
+                                simulationViewModel.changeOpenAlertDialog(openAlertDialog)
+                            }) {
+                                Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete")
+                            }
+                        }
+                    }
+                }
+            }
             IconButton(
-                onClick = { simulationViewModel.changeOpenAddItemDialog(openAddItemDialog) },
+                onClick = {
+                    simulationViewModel.setWeight("")
+                    simulationViewModel.setDescription("")
+                    simulationViewModel.changeOpenAddItemDialog(openAddItemDialog)
+                },
                 modifier = Modifier.align(Alignment.BottomEnd),
             ) {
                 Icon(
@@ -110,7 +202,10 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
         Divider(modifier = Modifier.size(350.dp,3.dp))
 
         Button(
-            onClick = { simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
+            onClick = {
+                alertDialogText = "Are you sure to do this trade?"
+                simulationViewModel.changeOpenAlertDialog(openAlertDialog)
+            },
             modifier = Modifier.padding(top = 50.dp)
         ) {
             Text(text = "Confirm the trade")
@@ -119,10 +214,11 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
 }
 
 @Composable
-private fun AlertDialogConfirm(
+private fun AlertDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     dialogTitle: String,
+    dialogText: String,
     simulationViewModel: SimulationViewModel
 ) {
     AlertDialog(
@@ -131,7 +227,7 @@ private fun AlertDialogConfirm(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         ) },
-        text = { Text(text = "Are you sure to do this trade?") },
+        text = { Text(text = dialogText) },
         onDismissRequest = { onDismissRequest() },
         dismissButton = {
             TextButton(
@@ -158,7 +254,7 @@ private fun AlertDialogConfirm(
 private fun AddItemDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
-    simulationViewModel: SimulationViewModel
+    simulationViewModel: SimulationViewModel,
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
 
@@ -167,6 +263,12 @@ private fun AddItemDialog(
         val description by simulationViewModel.description.observeAsState("")
 
         val sellPrice by simulationViewModel.sellPrice.observeAsState()
+
+        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf())
+
+        var showSilverType by remember { mutableStateOf(false) }
+
+        var silverType by remember { mutableStateOf(SilverType("", 0f)) }
 
         Card(
             modifier = Modifier
@@ -177,14 +279,17 @@ private fun AddItemDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = "Add new item",
-                    modifier = Modifier.padding(16.dp),
-                    fontSize = 23.sp
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    fontSize = 23.sp,
+                    textAlign = TextAlign.Center
                 )
 
                 TextField(
@@ -197,17 +302,28 @@ private fun AddItemDialog(
                     value = description,
                     onValueChange = { simulationViewModel.setDescription(description = it) },
                     label = { Text(text = "Description") },
-                    modifier = Modifier.padding(top = 10.dp)
+                    modifier = Modifier.padding(top = 10.dp, bottom = 20.dp)
                 )
 
-                sellPrice?.let {
-                    TextField(
-                        value = it,
-                        onValueChange = { simulationViewModel.setSellPrice(sellPrice = it) },
-                        readOnly = true,
-                        label = { Text(text = "Sell Price") },
-                        modifier = Modifier.padding(top = 10.dp)
-                    )
+                Row(
+                    modifier = Modifier
+                        .clickable { showSilverType = !showSilverType }
+                        .padding(start = 15.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Silver Type")
+
+                    Spacer(modifier = Modifier.size(width = 30.dp, 0.dp))
+                    Icon(imageVector = Icons.Filled.KeyboardArrowDown, contentDescription = "")
+
+                    DropdownMenu(expanded = showSilverType, onDismissRequest = { /*TODO*/ }) {
+                        silverTypeList.map {
+                            DropdownMenuItem(text = {
+                                Text(text = "${it.name} | ${it.currentPrice}")
+                            }, onClick = { silverType = it })
+                        }
+                    }
                 }
 
                 Row(
@@ -223,7 +339,116 @@ private fun AddItemDialog(
                         Text("Dismiss")
                     }
                     TextButton(
-                        onClick = { onConfirmation() },
+                        onClick = {
+                            simulationViewModel.addTradeable(Tradeable(weight.toFloat(), description, null, silverType))
+                            onConfirmation()
+                        },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text("Confirm")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ModifyItemDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    simulationViewModel: SimulationViewModel,
+    tradeable: Tradeable
+) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+
+        val weight by simulationViewModel.weight.observeAsState("${tradeable.weight}")
+
+        val description by simulationViewModel.description.observeAsState(tradeable.description)
+
+        val sellPrice by simulationViewModel.sellPrice.observeAsState()
+
+        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf())
+
+        var showSilverType by remember { mutableStateOf(false) }
+
+        var silverType by remember { mutableStateOf(SilverType("", 0f)) }
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(375.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = "Modify item",
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    fontSize = 23.sp,
+                    textAlign = TextAlign.Center
+                )
+
+                TextField(
+                    value = weight,
+                    onValueChange = { simulationViewModel.setWeight(weight = it) },
+                    label = { Text(text = "Weight") }
+                )
+
+                TextField(
+                    value = description,
+                    onValueChange = { simulationViewModel.setDescription(description = it) },
+                    label = { Text(text = "Description") },
+                    modifier = Modifier.padding(top = 10.dp, bottom = 20.dp)
+                )
+
+                Row(
+                    modifier = Modifier
+                        .clickable { showSilverType = !showSilverType }
+                        .padding(start = 15.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Silver Type")
+
+                    Spacer(modifier = Modifier.size(width = 30.dp, 0.dp))
+                    Icon(imageVector = Icons.Filled.KeyboardArrowDown, contentDescription = "")
+
+                    DropdownMenu(expanded = showSilverType, onDismissRequest = { /*TODO*/ }) {
+                        silverTypeList.map {
+                            DropdownMenuItem(text = {
+                                Text(text = "${it.name} | ${it.currentPrice}")
+                            }, onClick = { silverType = it })
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    TextButton(
+                        onClick = {
+                            onDismissRequest()
+                        },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text("Dismiss")
+                    }
+                    TextButton(
+                        onClick = {
+                            simulationViewModel.modifyTradeable(tradeable)
+                            onConfirmation()
+                        },
                         modifier = Modifier.padding(8.dp),
                     ) {
                         Text("Confirm")

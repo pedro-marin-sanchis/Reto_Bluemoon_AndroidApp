@@ -34,6 +34,8 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
 
     val areFieldsEnabled by userDataViewModel.areFieldsEnabled.observeAsState(initial = false)
 
+    val arePasswordFieldsEnabled by userDataViewModel.arePasswordFieldsEnabled.observeAsState(initial = false)
+
     val scrollState = rememberScrollState()
     Box(
         modifier = Modifier
@@ -120,7 +122,7 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
             PasswordField(
                 passwordState = passwordData,
                 onTextFieldChanged = { userDataViewModel.setPassword(it) },
-                enabled = areFieldsEnabled,
+                enabled = arePasswordFieldsEnabled,
                 placeholder = { Text("Password") }
             )
             Spacer(modifier = Modifier.padding(12.dp))
@@ -128,7 +130,7 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
             PasswordField(
                 passwordState = confirmPasswordData,
                 onTextFieldChanged = { userDataViewModel.setConfirmPassword(it) },
-                enabled = areFieldsEnabled,
+                enabled = arePasswordFieldsEnabled,
                 placeholder = { Text("Confirm Password") }
             )
 
@@ -136,18 +138,24 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
 
 
             // Botón para modificar
-
             Button(onClick = {
-                if (areFieldsEnabled) {
+                if (arePasswordFieldsEnabled) {
                     userDataViewModel.updatePassword()
                 } else {
-                    userDataViewModel.enableModify()
+                    userDataViewModel.enableModifyPassword()
                 }
             }) {
-                Text(if (areFieldsEnabled) "Save" else "Change Password")
+                Text(if (arePasswordFieldsEnabled) "Save" else "Change Password")
 
             }
 
+            /*ModifierButton(onModifyButtonClick = {
+                if (areFieldsEnabled) {
+                    userDataViewModel.updateUser()
+                } else {
+                    userDataViewModel.enableModify()
+                }
+            })*/
         }
     }
 }
