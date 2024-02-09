@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CurrencyExchange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -48,7 +49,6 @@ import com.uguinformatica.bluemoon.androidapp.domain.models.SilverType
 import com.uguinformatica.bluemoon.androidapp.domain.models.Tradeable
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_inverseOnSurface
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_primaryContainer
-import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_secondaryContainer
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 
 @Composable
@@ -59,14 +59,20 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
     val openModifyItemDialog by simulationViewModel.openModifyItemDialog.observeAsState(false)
     val tradeableItemList by simulationViewModel.tradeableItemList.observeAsState(listOf())
     val tradeableItem by simulationViewModel.tradeableItem.observeAsState()
+    var alertDialogText by remember { mutableStateOf("") }
 
     when {
         openAlertDialog -> {
-            AlertDialogConfirm(
+            AlertDialog(
                 onDismissRequest = { simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
                 onConfirmation = {
-                    simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
+                    if (alertDialogText != "Are you sure to do this trade?") {
+                        simulationViewModel.deleteTradeable(tradeableItem!!)
+                    }
+                    simulationViewModel.changeOpenAlertDialog(openAlertDialog)
+                },
                 dialogTitle = "Confirm trade",
+                dialogText = alertDialogText,
                 simulationViewModel
             )
         }
@@ -140,19 +146,23 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
                             .padding(top = 10.dp, bottom = 10.dp),
                         colors = CardDefaults.cardColors(md_theme_light_inverseOnSurface)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            Text(
-                                text = "Weight: ${it.weight} \n" +
-                                        "Description: ${it.description} \n" +
-                                        "Sell Price: ${it.sellPrice} \n" +
-                                        "Silver Type: ${it.sliverType.name}",
-                                modifier = Modifier.padding(start = 6.dp)
-                            )
+                        Text(
+                            text = "Weight: ${it.weight} \n" +
+                                    "Description: ${it.description} \n" +
+                                    "Sell Price: ${it.sellPrice} \n" +
+                                    "Silver Type: ${it.sliverType.name}",
+                            modifier = Modifier.padding(start = 6.dp)
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             TextButton(onClick = { simulationViewModel.changeOpenModifyItemDialog(openModifyItemDialog, it) }) {
                                 Text(text = "Modify")
+                            }
+                            IconButton(onClick = {
+                                alertDialogText = "Are you sure to delete this trade item?"
+                                simulationViewModel.changeTradeable(it)
+                                simulationViewModel.changeOpenAlertDialog(openAlertDialog)
+                            }) {
+                                Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete")
                             }
                         }
                     }
@@ -192,7 +202,10 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
         Divider(modifier = Modifier.size(350.dp,3.dp))
 
         Button(
-            onClick = { simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
+            onClick = {
+                alertDialogText = "Are you sure to do this trade?"
+                simulationViewModel.changeOpenAlertDialog(openAlertDialog)
+            },
             modifier = Modifier.padding(top = 50.dp)
         ) {
             Text(text = "Confirm the trade")
@@ -201,10 +214,11 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
 }
 
 @Composable
-private fun AlertDialogConfirm(
+private fun AlertDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     dialogTitle: String,
+    dialogText: String,
     simulationViewModel: SimulationViewModel
 ) {
     AlertDialog(
@@ -213,7 +227,7 @@ private fun AlertDialogConfirm(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         ) },
-        text = { Text(text = "Are you sure to do this trade?") },
+        text = { Text(text = dialogText) },
         onDismissRequest = { onDismissRequest() },
         dismissButton = {
             TextButton(
@@ -265,7 +279,8 @@ private fun AddItemDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
@@ -368,7 +383,8 @@ private fun ModifyItemDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(

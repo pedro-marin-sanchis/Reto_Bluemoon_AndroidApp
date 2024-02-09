@@ -61,6 +61,14 @@ class SimulationViewModel : ViewModel() {
         _openModifyItemDialog.postValue(!openModifyItemDialog)
     }
 
+    fun changeTradeable(tradeable: Tradeable) {
+        _tradeableItem.postValue(tradeable)
+    }
+
+    fun deleteTradeable(tradeable: Tradeable) {
+        _tradeableItemList.value?.remove(tradeable)
+    }
+
     fun modifyTradeable(tradeable: Tradeable) {
         tradeable.weight = _weight.value?.toFloat()!!
         tradeable.description = description.value!!
