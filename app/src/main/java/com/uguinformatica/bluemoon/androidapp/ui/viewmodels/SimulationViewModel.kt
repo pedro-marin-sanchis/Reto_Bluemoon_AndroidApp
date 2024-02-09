@@ -3,6 +3,7 @@ package com.uguinformatica.bluemoon.androidapp.ui.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import com.uguinformatica.bluemoon.androidapp.domain.models.SilverType
 import com.uguinformatica.bluemoon.androidapp.domain.models.Tradeable
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,17 +15,16 @@ class SimulationViewModel : ViewModel() {
     private var _tradeableItem = MutableLiveData(Tradeable(0f,"",null, SilverType("",0f)))
     private var _weight = MutableLiveData("")
     private var _description = MutableLiveData("")
-    private var _sellPrice = MutableLiveData("")
     private var _silverTypeList = MutableLiveData(listOf<SilverType>())
     private var _silverType = MutableLiveData<SilverType>(null)
     private var _openAlertDialog = MutableLiveData(false)
     private var _openAddItemDialog = MutableLiveData(false)
     private var _openModifyItemDialog = MutableLiveData(false)
     private var _showSilverTypeList = MutableLiveData(false)
+    private var _totalTrade = MutableLiveData(0.0)
 
     val weight: LiveData<String> = _weight
     val description: LiveData<String> = _description
-    val sellPrice: LiveData<String> = _sellPrice
     val silverTypeList: LiveData<List<SilverType>> = _silverTypeList
     val silverType: LiveData<SilverType> = _silverType
     val openAlertDialog:LiveData<Boolean> = _openAlertDialog
@@ -33,6 +33,7 @@ class SimulationViewModel : ViewModel() {
     val tradeableItem: LiveData<Tradeable> = _tradeableItem
     val openModifyItemDialog: LiveData<Boolean> = _openModifyItemDialog
     val showSilverTypeList: LiveData<Boolean> = _showSilverTypeList
+    val totalTrade: LiveData<Double> = _totalTrade
 
     fun setWeight(weight: String) {
         _weight.postValue(weight)
@@ -44,10 +45,6 @@ class SimulationViewModel : ViewModel() {
 
     fun setDescription(description: String) {
         _description.postValue(description)
-    }
-
-    fun setSellPrice(sellPrice: String) {
-        _sellPrice.postValue(sellPrice)
     }
 
     fun changeOpenAlertDialog(openAlertDialog: Boolean) {
@@ -73,10 +70,6 @@ class SimulationViewModel : ViewModel() {
         _tradeableItem.postValue(tradeable)
     }
 
-    fun setSilverType(silverType: SilverType) {
-        _tradeableItem.value?.sliverType = silverType
-    }
-
     fun changeSilverType(silverType: SilverType) {
         _silverType.postValue(silverType)
     }
@@ -85,8 +78,18 @@ class SimulationViewModel : ViewModel() {
         _tradeableItemList.value?.remove(tradeable)
     }
 
+    fun calculateTotalTrade() {
+        _totalTrade.value = 0.0
+        _tradeableItemList.value?.map {
+            _totalTrade.value = _totalTrade.value!! + it.sellPrice?.toDouble()!!
+        }
+        println(_totalTrade.value)
+    }
+
     fun modifyTradeable(tradeable: Tradeable) {
         tradeable.weight = _weight.value?.toFloat()!!
         tradeable.description = description.value!!
+        tradeable.sellPrice = _weight.value?.toFloat()!! * _silverType.value?.currentPrice!!
+        tradeable.sliverType = _silverType.value!!
     }
 }
