@@ -45,14 +45,11 @@ fun ProductListItem(product: Product, navHostController: NavHostController, prod
             }
     ) {
         AsyncImage(model = product.image, contentDescription = "")
-        /*Image(
-            painter = painterResource(id = product.image),
-            contentDescription = "Product Image"
-        )*/
 
         Text(
             text = product.name,
             fontSize = 25.sp,
+            modifier = Modifier.padding(start = 5.dp)
         )
 
         Row(
@@ -62,6 +59,7 @@ fun ProductListItem(product: Product, navHostController: NavHostController, prod
             Text(
                 text = "${product.price}$",
                 fontSize = 25.sp,
+                modifier = Modifier.padding(start = 5.dp)
             )
             Spacer(modifier = Modifier.padding(horizontal = 20.dp))
             IconButton(onClick = {

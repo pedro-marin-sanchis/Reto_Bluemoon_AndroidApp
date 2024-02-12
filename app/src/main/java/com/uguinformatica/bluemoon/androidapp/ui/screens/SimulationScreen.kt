@@ -40,12 +40,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.uguinformatica.bluemoon.androidapp.domain.models.SilverType
 import com.uguinformatica.bluemoon.androidapp.domain.models.Tradeable
+import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_inverseOnSurface
+import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_onSurface
+import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_onSurfaceVariant
+import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_outline
+import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_surfaceVariant
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_inverseOnSurface
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_primaryContainer
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
@@ -69,6 +75,7 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
                 onConfirmation = {
                     if (alertDialogText != "Are you sure to do this trade?") {
                         simulationViewModel.deleteTradeable(tradeableItem!!)
+                        simulationViewModel.calculateTotalTrade()
                     }
                     simulationViewModel.changeOpenAlertDialog(openAlertDialog)
                 },
@@ -129,7 +136,7 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
             modifier = Modifier
                 .size(350.dp, 450.dp)
                 .background(
-                    color = md_theme_light_primaryContainer,
+                    color = md_theme_dark_surfaceVariant,
                     shape = RoundedCornerShape(30.dp)
                 ),
         ) {
@@ -143,21 +150,23 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
                 tradeableItemList.map {
                     Card(
                         modifier = Modifier
-                            //.size(width = 300.dp)
-                            .padding(top = 10.dp, bottom = 10.dp),
-                        colors = CardDefaults.cardColors(md_theme_light_inverseOnSurface)
+                            .fillMaxWidth()
+                            .padding(15.dp),
+                        colors = CardDefaults.cardColors(md_theme_dark_outline)
                     ) {
                         Text(
                             text = "Weight: ${it.weight} \n" +
                                     "Description: ${it.description} \n" +
                                     "Sell Price: ${it.sellPrice} \n" +
                                     "Silver Type: ${it.sliverType.name}",
-                            modifier = Modifier.padding(start = 6.dp)
+                            modifier = Modifier.padding(start = 6.dp),
+                            color = md_theme_light_inverseOnSurface
                         )
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             TextButton(onClick = { simulationViewModel.changeOpenModifyItemDialog(openModifyItemDialog, it) }) {
                                 Text(text = "Modify")
                             }
+
                             IconButton(onClick = {
                                 alertDialogTitle = "Delete Item"
                                 alertDialogText = "Are you sure to delete this item?"
@@ -182,6 +191,7 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
                     imageVector = Icons.Filled.AddCircle,
                     contentDescription = "AddItem",
                     modifier = Modifier.fillMaxSize(),
+                    tint = md_theme_dark_onSurface
                 )
             }
         }

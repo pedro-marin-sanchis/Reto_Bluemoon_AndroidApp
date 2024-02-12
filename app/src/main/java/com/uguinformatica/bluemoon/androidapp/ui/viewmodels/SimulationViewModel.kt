@@ -15,7 +15,9 @@ class SimulationViewModel : ViewModel() {
     private var _tradeableItem = MutableLiveData(Tradeable(0.0,"",0.0, SilverType("",0.0)))
     private var _weight = MutableLiveData("")
     private var _description = MutableLiveData("")
-    private var _silverTypeList = MutableLiveData(listOf<SilverType>())
+    private var _silverTypeList = MutableLiveData(listOf<SilverType>(
+        SilverType("a", 12.0)
+    ))
     private var _silverType = MutableLiveData<SilverType>(null)
     private var _openAlertDialog = MutableLiveData(false)
     private var _openAddItemDialog = MutableLiveData(false)

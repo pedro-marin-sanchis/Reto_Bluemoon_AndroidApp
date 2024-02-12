@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.domain.models.Order
 import java.text.SimpleDateFormat
@@ -74,8 +75,8 @@ fun OrderItem(order: Order) {
                             Text(text = "Name: ${it.product.name} \nPrice: ${it.product.price}$ \nQuantity: ${it.quantity}") },
                         onClick = { /*TODO*/ },
                         leadingIcon = {
-                            Image(
-                                painter = painterResource(id = R.drawable.anillo),
+                            AsyncImage(
+                                model = it.product.image,
                                 contentDescription = "",
                                 modifier = Modifier.size(60.dp)
                             )
