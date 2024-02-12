@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.AlertDialog
@@ -63,8 +62,10 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
     val openAddItemDialog by simulationViewModel.openAddItemDialog.observeAsState(false)
     val openModifyItemDialog by simulationViewModel.openModifyItemDialog.observeAsState(false)
     val tradeableItemList by simulationViewModel.tradeableItemList.observeAsState(listOf())
+    val tradeableItem by simulationViewModel.tradeableItem.observeAsState()
+    val totalTrade by simulationViewModel.totalTrade.observeAsState(0.0)
+    var alertDialogTitle by remember { mutableStateOf("") }
     val tradeableItem by simulationViewModel.tradeableItem.observeAsState(Tradeable(0.0,"",0.0, SilverType("",0.0, 0)))
-    var alertDialogText by remember { mutableStateOf("") }
 
     when {
         openAlertDialog -> {
@@ -82,7 +83,7 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
 
                     simulationViewModel.changeOpenAlertDialog(openAlertDialog)
                 },
-                dialogTitle = "Confirm trade",
+                dialogTitle = alertDialogTitle,
                 dialogText = alertDialogText,
                 simulationViewModel
             )
@@ -169,7 +170,8 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
                                 Text(text = "Modify")
                             }
                             IconButton(onClick = {
-                                alertDialogText = "Are you sure to delete this trade item?"
+                                alertDialogTitle = "Delete Item"
+                                alertDialogText = "Are you sure to delete this item?"
                                 simulationViewModel.changeTradeable(it)
                                 simulationViewModel.changeOpenAlertDialog(openAlertDialog)
                             }) {
@@ -203,17 +205,16 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
             horizontalArrangement = Arrangement.Start
         ) {
             Text(
-                text = "Total: ",
+                text = "Total: $totalTrade$",
                 fontSize = 25.sp,
             )
-            Spacer(modifier = Modifier.size(width = 250.dp, height = 0.dp))
-            Icon(imageVector = Icons.Filled.CurrencyExchange, contentDescription = "Coin")
         }
 
         Divider(modifier = Modifier.size(350.dp,3.dp))
 
         Button(
             onClick = {
+                alertDialogTitle = "Confirm Trade"
                 alertDialogText = "Are you sure to do this trade?"
                 simulationViewModel.changeOpenAlertDialog(openAlertDialog)
             },
@@ -252,6 +253,7 @@ private fun AlertDialog(
         confirmButton = {
             TextButton(
                 onClick = {
+                    simulationViewModel.calculateTotalTrade()
                     onConfirmation()
                 }
             ) {
@@ -273,13 +275,13 @@ private fun AddItemDialog(
 
         val description by simulationViewModel.description.observeAsState("")
 
-        val sellPrice by simulationViewModel.sellPrice.observeAsState()
-
         val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf())
 
         val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
-        var silverType by remember { mutableStateOf(SilverType("", 0.0, 0)) }
+        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0.0))
+
+        var dropDownText by remember { mutableStateOf("Select silver type") }
 
         Card(
             modifier = Modifier
@@ -323,7 +325,7 @@ private fun AddItemDialog(
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Silver Type")
+                    Text(text = dropDownText)
 
                     Spacer(modifier = Modifier.size(width = 30.dp, 0.dp))
                     Icon(imageVector = Icons.Filled.KeyboardArrowDown, contentDescription = "")
@@ -331,9 +333,10 @@ private fun AddItemDialog(
                     DropdownMenu(expanded = showSilverType, onDismissRequest = { /*TODO*/ }) {
                         silverTypeList.map {
                             DropdownMenuItem(text = {
-                                Text(text = "${it.name} | ${it.currentPrice}")
+                                Text(text = "${it.name} | ${it.currentPrice}($/g)")
                             }, onClick = {
                                 simulationViewModel.changeSilverType(it)
+                                dropDownText = "${it.name} ${it.currentPrice}($/g)"
                                 simulationViewModel.changeShowSilverTypeList(showSilverType)
                             })
                         }
@@ -354,6 +357,7 @@ private fun AddItemDialog(
                     }
                     TextButton(
                         onClick = {
+                            simulationViewModel.calculateTotalTrade()
                             simulationViewModel.addTradeable(Tradeable(weight.toDouble(), description, weight.toDouble()*silverType.currentPrice, silverType))
                             onConfirmation()
                         },
@@ -386,7 +390,7 @@ private fun ModifyItemDialog(
 
         val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
-        var silverType by remember { mutableStateOf(SilverType("", 0.0, 0)) }
+        var dropDownText by remember { mutableStateOf("Select silver type") }
 
         Card(
             modifier = Modifier
@@ -430,7 +434,7 @@ private fun ModifyItemDialog(
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Silver Type")
+                    Text(text = dropDownText)
 
                     Spacer(modifier = Modifier.size(width = 30.dp, 0.dp))
                     Icon(imageVector = Icons.Filled.KeyboardArrowDown, contentDescription = "")
@@ -438,9 +442,10 @@ private fun ModifyItemDialog(
                     DropdownMenu(expanded = showSilverType, onDismissRequest = { /*TODO*/ }) {
                         silverTypeList.map {
                             DropdownMenuItem(text = {
-                                Text(text = "${it.name} | ${it.currentPrice}")
+                                Text(text = "${it.name} | ${it.currentPrice}($/g)")
                             }, onClick = {
-                                simulationViewModel.setSilverType(it)
+                                simulationViewModel.changeSilverType(it)
+                                dropDownText = "${it.name} ${it.currentPrice}($/g)"
                                 simulationViewModel.changeShowSilverTypeList(showSilverType)
                             })
                         }
@@ -464,6 +469,7 @@ private fun ModifyItemDialog(
                     TextButton(
                         onClick = {
                             simulationViewModel.modifyTradeable(tradeable)
+                            simulationViewModel.calculateTotalTrade()
                             onConfirmation()
                         },
                         modifier = Modifier.padding(8.dp),

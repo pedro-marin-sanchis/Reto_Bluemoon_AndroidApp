@@ -10,9 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import com.uguinformatica.bluemoon.androidapp.R
-import com.uguinformatica.bluemoon.androidapp.domain.models.Order
-import com.uguinformatica.bluemoon.androidapp.domain.models.Product
 import com.uguinformatica.bluemoon.androidapp.ui.components.OrderComponents.OrderItem
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.OrderViewModel
 

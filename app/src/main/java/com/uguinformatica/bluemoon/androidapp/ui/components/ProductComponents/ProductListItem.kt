@@ -69,8 +69,9 @@ fun ProductListItem(
             )
             Spacer(modifier = Modifier.padding(horizontal = 20.dp))
             IconButton(onClick = {
-                productViewModel.addProductToCart(product.id, 1)
                 toast.show()
+                productViewModel.addProductToCart(product.id, 1)
+
             }) {
                 Icon(
                     imageVector = Icons.Filled.AddShoppingCart,

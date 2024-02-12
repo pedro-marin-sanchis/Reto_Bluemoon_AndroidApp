@@ -18,8 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.uguinformatica.bluemoon.androidapp.ui.components.RegisterComponents.HeaderImageRegister
-import com.uguinformatica.bluemoon.androidapp.ui.components.UserDataComponents.PasswordField
 import com.uguinformatica.bluemoon.androidapp.ui.components.UserDataComponents.CustomField
+import com.uguinformatica.bluemoon.androidapp.ui.components.UserDataComponents.PasswordField
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.UserDataViewModel
 
 @Composable

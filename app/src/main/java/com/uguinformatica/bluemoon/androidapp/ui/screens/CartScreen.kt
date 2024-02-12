@@ -28,8 +28,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.uguinformatica.bluemoon.androidapp.R
-import com.uguinformatica.bluemoon.androidapp.domain.models.Product
 import com.uguinformatica.bluemoon.androidapp.ui.components.CartComponents.CartProductItem
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
 

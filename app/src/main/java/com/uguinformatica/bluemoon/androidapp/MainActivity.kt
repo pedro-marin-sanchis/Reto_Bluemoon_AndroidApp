@@ -405,7 +405,6 @@ private fun ModalNavigation(
                     },
                     colors = drawerItemColors()
                 )
-
                 Row(modifier = Modifier
                     .align(End)
                     //.padding(top = 60.dp)
