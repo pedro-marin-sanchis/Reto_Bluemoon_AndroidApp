@@ -81,7 +81,7 @@ fun LoginScreen(navHostController: NavHostController, loginViewModel: LoginViewM
             NotAccount(Modifier, navHostController)
 
             Spacer(modifier = Modifier.padding(16.dp))
-            ForgotPassword(Modifier.align(Alignment.End), navHostController)
+            //ForgotPassword(Modifier.align(Alignment.End), navHostController)
         }
     }
 }
