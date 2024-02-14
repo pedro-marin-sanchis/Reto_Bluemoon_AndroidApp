@@ -80,8 +80,7 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
                 onDismissRequest = { simulationViewModel.changeOpenAlertDialog(openAlertDialog) },
                 onConfirmation = {
                     if (alertDialogText != "Are you sure to do this trade?") {
-                        simulationViewModel.deleteTradeable(tradeableItem!!)
-
+                        simulationViewModel.deleteTradeable(tradeableItem)
                         simulationViewModel.calculateTotalTrade()
                     }
 
@@ -118,22 +117,12 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
 
     when {
         openModifyItemDialog -> {
-            tradeableItem?.let {
-                ModifyItemDialog(
-                    onDismissRequest = { tradeableItem?.let {
-                        simulationViewModel.changeOpenModifyItemDialog(openModifyItemDialog,
-                            it
-                        )
-                    } },
-                    onConfirmation = { tradeableItem?.let {
-                        simulationViewModel.changeOpenModifyItemDialog(openModifyItemDialog,
-                            it
-                        )
-                    } },
-                    simulationViewModel,
-                    it
-                )
-            }
+            ModifyItemDialog(
+                onDismissRequest = { simulationViewModel.changeOpenModifyItemDialog(openModifyItemDialog, tradeableItem) },
+                onConfirmation = { simulationViewModel.changeOpenModifyItemDialog(openModifyItemDialog, tradeableItem) },
+                simulationViewModel,
+                tradeableItem
+            )
         }
     }
 
@@ -197,7 +186,9 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
                     simulationViewModel.setDescription("")
                     simulationViewModel.changeOpenAddItemDialog(openAddItemDialog)
                 },
-                modifier = Modifier.align(Alignment.BottomEnd),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 5.dp, end = 5.dp),
             ) {
                 Icon(
                     imageVector = Icons.Filled.AddCircle,
@@ -264,7 +255,7 @@ private fun AlertDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    simulationViewModel.calculateTotalTrade()
+                    //simulationViewModel.calculateTotalTrade()
                     onConfirmation()
                 }
             ) {
@@ -374,8 +365,8 @@ private fun AddItemDialog(
                     }
                     TextButton(
                         onClick = {
-                            simulationViewModel.calculateTotalTrade()
                             simulationViewModel.addTradeable(Tradeable(weight.toDouble(), description, weight.toDouble()*silverType.currentPrice, silverType))
+                            simulationViewModel.calculateTotalTrade()
                             onConfirmation()
                         },
                         modifier = Modifier.padding(8.dp),
@@ -414,6 +405,8 @@ private fun ModifyItemDialog(
         } else if (silverTypeList is UiState.Error) {
             return@Dialog
         }
+
+        dropDownText = "${tradeable.sliverType.name} ${tradeable.sliverType.currentPrice}($/g)"
 
         val silverTypeListLoaded = (silverTypeList as UiState.Loaded).data
 

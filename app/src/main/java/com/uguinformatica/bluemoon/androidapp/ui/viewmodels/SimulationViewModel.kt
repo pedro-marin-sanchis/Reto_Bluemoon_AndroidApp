@@ -73,14 +73,8 @@ class SimulationViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
 
-                val tradeable = Tradeable(
-                    weight = _weight.value?.toDouble()!!,
-                    description = _description.value!!,
-                    sliverType = _silverType.value!!
-                )
-
                 val trade = TradeCreate(
-                    tradeables = mutableListOf(tradeable)
+                    tradeables = _tradeableItemList.value!!
                 )
 
 
@@ -89,6 +83,8 @@ class SimulationViewModel @Inject constructor(
                 when (status) {
                     is Status.Success -> {
                         _toastMessage.postValue("Trade created")
+                        _tradeableItemList.postValue(mutableListOf())
+                        _totalTrade.postValue(0.0)
                     }
 
                     is Status.Error -> {
@@ -101,7 +97,7 @@ class SimulationViewModel @Inject constructor(
     }
 
     fun setWeight(weight: String) {
-        _weight.postValue(weight)
+        _weight.value = weight
     }
 
     fun addTradeable(tradeable: Tradeable) {
@@ -109,34 +105,34 @@ class SimulationViewModel @Inject constructor(
     }
 
     fun setDescription(description: String) {
-        _description.postValue(description)
+        _description.value = description
     }
 
     fun changeOpenAlertDialog(openAlertDialog: Boolean) {
-        _openAlertDialog.postValue(!openAlertDialog)
+        _openAlertDialog.value = !openAlertDialog
     }
 
     fun changeOpenAddItemDialog(openAddItemDialog: Boolean) {
-        _openAddItemDialog.postValue(!openAddItemDialog)
+        _openAddItemDialog.value = !openAddItemDialog
     }
 
     fun changeShowSilverTypeList(showSilverType: Boolean) {
-        _showSilverTypeList.postValue(!showSilverType)
+        _showSilverTypeList.value = !showSilverType
     }
 
     fun changeOpenModifyItemDialog(openModifyItemDialog: Boolean, tradeable: Tradeable) {
         _tradeableItem.value = tradeable
         setWeight(tradeable.weight.toString())
         setDescription(tradeable.description)
-        _openModifyItemDialog.postValue(!openModifyItemDialog)
+        _openModifyItemDialog.value = !openModifyItemDialog
     }
 
     fun changeTradeable(tradeable: Tradeable) {
-        _tradeableItem.postValue(tradeable)
+        _tradeableItem.value = tradeable
     }
 
     fun changeSilverType(silverType: SilverType) {
-        _silverType.postValue(silverType)
+        _silverType.value = silverType
     }
 
     fun deleteTradeable(tradeable: Tradeable) {
@@ -146,7 +142,7 @@ class SimulationViewModel @Inject constructor(
     fun calculateTotalTrade() {
         _totalTrade.value = 0.0
         _tradeableItemList.value?.map {
-            _totalTrade.value = _totalTrade.value!! + it.sellPrice?.toDouble()!!
+            _totalTrade.value = _totalTrade.value!! + it.sellPrice!!
         }
         println(_totalTrade.value)
     }
