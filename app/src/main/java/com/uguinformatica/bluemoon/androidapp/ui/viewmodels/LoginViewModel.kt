@@ -1,13 +1,15 @@
 package com.uguinformatica.bluemoon.androidapp.ui.viewmodels
 
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uguinformatica.bluemoon.androidapp.domain.models.UserLogin
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.BadRequest
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.Status
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.Unauthorized
 import com.uguinformatica.bluemoon.androidapp.domain.usecase.LoginUseCase
+import com.uguinformatica.bluemoon.androidapp.ui.ErrorTypeToStringConverterImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,11 +23,17 @@ class LoginViewModel @Inject constructor(
 
     private var _username = MutableLiveData("")
     private var _password = MutableLiveData("")
+
     private var _isLoged = MutableLiveData(false)
+    private var _showToast = MutableLiveData(false)
 
     val username: LiveData<String> = _username
     val password: LiveData<String> = _password
+
     val isLoged: LiveData<Boolean> = _isLoged
+    val showErrorToast: LiveData<Boolean> = _showToast
+
+    var toastMessage = ""
 
     private fun checkFields(): Boolean {
         return checkUsername() && checkPassword()
@@ -53,18 +61,36 @@ class LoginViewModel @Inject constructor(
 
                 val loginData = UserLogin(_username.value!!, _password.value!!)
 
-                try {
-                    loginUseCase.login(loginData)
-                    _isLoged.postValue(true)
 
-                    _username.postValue("")
-                    _password.postValue("")
+                val loginStatus = loginUseCase.login(loginData)
 
-                } catch (e: Exception) {
-                    _isLoged.postValue(false)
+                when (loginStatus) {
+                    is Status.Success -> {
+                        _isLoged.postValue(true)
+                        _username.postValue("")
+                        _password.postValue("")
+                    }
+                    is Status.Error -> {
+                        showToast(ErrorTypeToStringConverterImpl().convert(loginStatus.error))
+                    }
                 }
+
+
+
+
             }
         }
+    }
+
+    private fun showToast(message: String) {
+
+        toastMessage = message
+
+        _showToast.postValue(true)
+    }
+
+    fun hideToast() {
+        _showToast.postValue(false)
     }
 
     private fun checkUsername(): Boolean {
@@ -76,11 +102,11 @@ class LoginViewModel @Inject constructor(
     }
 
     fun setUsername(username: String) {
-        _username.postValue(username)
+        _username.value = username
     }
 
     fun setPassword(password: String) {
-        _password.postValue(password)
+        _password.value = password
     }
 
     fun setIsLoged(isLoged: Boolean) {

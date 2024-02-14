@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.uguinformatica.bluemoon.androidapp.domain.models.Product
+import com.uguinformatica.bluemoon.androidapp.ui.components.UiState
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ProductDetailViewModel
 
 @Composable
@@ -29,16 +31,32 @@ fun ProductDetailScreen(
     navHostController: NavHostController,
     productDetailViewModel: ProductDetailViewModel
 ) {
-    val product by productDetailViewModel.product.observeAsState(
-        initial = Product(
-            0,
-            "",
-            "",
-            0.0,
-            ""
-        )
-    )
 
+    LaunchedEffect(key1 = {}) {
+        productDetailViewModel.fetchProduct(id)
+    }
+    val product by productDetailViewModel.product.observeAsState(UiState.Loading())
+
+    if (product is UiState.Loading) {
+        LoadingScreen()
+    } else if (product is UiState.Error) {
+        return
+    } else if (product is UiState.Loaded) {
+        LoadedProductScreeen(
+            paddingValues, (
+                    product as UiState.Loaded<Product>
+                    ).data, navHostController, productDetailViewModel
+        )
+    }
+}
+
+@Composable
+private fun LoadedProductScreeen(
+    paddingValues: PaddingValues,
+    product: Product,
+    navHostController: NavHostController,
+    productDetailViewModel: ProductDetailViewModel
+) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -46,15 +64,7 @@ fun ProductDetailScreen(
             .fillMaxSize()
             .padding(paddingValues)
     ) {
-        /*Image(
-            painter = painterResource(id = product.image),
-            contentDescription = "ProductImage",
-            modifier = Modifier
-                .size(300.dp)
-                .padding(bottom = 40.dp)
-                .fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )*/
+
 
         AsyncImage(
             model = product.image, contentDescription = "ProductImage", modifier = Modifier
@@ -85,7 +95,10 @@ fun ProductDetailScreen(
             Button(onClick = { navHostController.navigate("ProductScreen") }) {
                 Text(text = "Go back")
             }
-            Button(onClick = { productDetailViewModel.addProductToCart(product.id, 1 )}, modifier = Modifier.padding(start = 30.dp)) {
+            Button(
+                onClick = { productDetailViewModel.addProductToCart(product.id, 1) },
+                modifier = Modifier.padding(start = 30.dp)
+            ) {
                 Text(text = "Add to the cart")
             }
         }

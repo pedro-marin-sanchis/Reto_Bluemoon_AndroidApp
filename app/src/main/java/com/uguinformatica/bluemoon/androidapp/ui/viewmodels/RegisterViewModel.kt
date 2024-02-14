@@ -76,9 +76,7 @@ class RegisterViewModel @Inject constructor(
 
     private fun checkName(): Boolean {
         println("name: ${_name.value}")
-        if (_name.value == "") {
-            println("name is empty")
-        }
+
         return _name.value != ""
     }
 
@@ -140,31 +138,31 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun setName(name: String) {
-        _name.postValue(name)
+        _name.value = name
     }
 
     fun setSurname(surname: String) {
-        _surname.postValue(surname)
+        _surname.value = surname
     }
 
     fun setEmail(email: String) {
-        _email.postValue(email)
+        _email.value = email
     }
 
     fun setUsername(username: String) {
-        _username.postValue(username)
+        _username.value = username
     }
 
     fun setPassword(password: String) {
-        _password.postValue(password)
+        _password.value = password
     }
 
     fun setConfirmPassword(confirmPassword: String) {
-        _confirmPassword.postValue(confirmPassword)
+        _confirmPassword.value = confirmPassword
     }
 
     fun setAddress(address: String) {
-        _address.postValue(address)
+        _address.value = address
     }
 
     fun enableRegister() {

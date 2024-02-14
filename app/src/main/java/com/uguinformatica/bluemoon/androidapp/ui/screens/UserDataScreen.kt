@@ -138,7 +138,6 @@ fun UserDataScreen(paddingValues: PaddingValues, userDataViewModel: UserDataView
 
 
             // Botón para modificar
-
             Button(onClick = {
                 if (arePasswordFieldsEnabled) {
                     userDataViewModel.updatePassword()

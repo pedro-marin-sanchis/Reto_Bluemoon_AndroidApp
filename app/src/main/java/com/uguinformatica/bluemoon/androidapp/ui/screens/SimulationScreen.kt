@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -54,18 +55,23 @@ import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_outline
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_dark_surfaceVariant
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_inverseOnSurface
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_primaryContainer
+import com.uguinformatica.bluemoon.androidapp.ui.components.UiState
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 
 @Composable
 fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: SimulationViewModel) {
 
+    LaunchedEffect(key1 = {}){
+        simulationViewModel.fetchSilverTypes()
+    }
+
     val openAlertDialog by simulationViewModel.openAlertDialog.observeAsState(false)
     val openAddItemDialog by simulationViewModel.openAddItemDialog.observeAsState(false)
     val openModifyItemDialog by simulationViewModel.openModifyItemDialog.observeAsState(false)
     val tradeableItemList by simulationViewModel.tradeableItemList.observeAsState(listOf())
-    val tradeableItem by simulationViewModel.tradeableItem.observeAsState()
     val totalTrade by simulationViewModel.totalTrade.observeAsState(0.0)
     var alertDialogTitle by remember { mutableStateOf("") }
+    val tradeableItem by simulationViewModel.tradeableItem.observeAsState(Tradeable(0.0,"",0.0, SilverType("",0.0, 0)))
     var alertDialogText by remember { mutableStateOf("") }
 
     when {
@@ -75,8 +81,14 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
                 onConfirmation = {
                     if (alertDialogText != "Are you sure to do this trade?") {
                         simulationViewModel.deleteTradeable(tradeableItem!!)
+
                         simulationViewModel.calculateTotalTrade()
                     }
+
+                    if (alertDialogText == "Are you sure to do this trade?") {
+                        simulationViewModel.crateTrade()
+                    }
+
                     simulationViewModel.changeOpenAlertDialog(openAlertDialog)
                 },
                 dialogTitle = alertDialogTitle,
@@ -274,14 +286,20 @@ private fun AddItemDialog(
 
         val description by simulationViewModel.description.observeAsState("")
 
-        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf())
+        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(UiState.Loading())
 
         val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
-        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0.0))
+        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0.0, 0))
 
         var dropDownText by remember { mutableStateOf("Select silver type") }
 
+        if (silverTypeList is UiState.Loading) {
+            return@Dialog
+        } else if (silverTypeList is UiState.Error) {
+            return@Dialog
+        }
+        val silverTypeListLoaded = (silverTypeList as UiState.Loaded).data
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -330,7 +348,7 @@ private fun AddItemDialog(
                     Icon(imageVector = Icons.Filled.KeyboardArrowDown, contentDescription = "")
 
                     DropdownMenu(expanded = showSilverType, onDismissRequest = { /*TODO*/ }) {
-                        silverTypeList.map {
+                        silverTypeListLoaded.map {
                             DropdownMenuItem(text = {
                                 Text(text = "${it.name} | ${it.currentPrice}($/g)")
                             }, onClick = {
@@ -356,8 +374,8 @@ private fun AddItemDialog(
                     }
                     TextButton(
                         onClick = {
-                            simulationViewModel.addTradeable(Tradeable(weight.toDouble(), description, weight.toFloat()*silverType.currentPrice, silverType))
                             simulationViewModel.calculateTotalTrade()
+                            simulationViewModel.addTradeable(Tradeable(weight.toDouble(), description, weight.toDouble()*silverType.currentPrice, silverType))
                             onConfirmation()
                         },
                         modifier = Modifier.padding(8.dp),
@@ -383,14 +401,21 @@ private fun ModifyItemDialog(
 
         val description by simulationViewModel.description.observeAsState(tradeable.description)
 
-        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf(
-            SilverType("asd", 23.0),
-            SilverType("asdsad", 24.0)
-        ))
+        //val sellPrice by simulationViewModel.sellPrice.observeAsState()
+
+        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(UiState.Loading())
 
         val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
         var dropDownText by remember { mutableStateOf("Select silver type") }
+
+        if (silverTypeList is UiState.Loading) {
+            return@Dialog
+        } else if (silverTypeList is UiState.Error) {
+            return@Dialog
+        }
+
+        val silverTypeListLoaded = (silverTypeList as UiState.Loaded).data
 
         Card(
             modifier = Modifier
@@ -440,7 +465,7 @@ private fun ModifyItemDialog(
                     Icon(imageVector = Icons.Filled.KeyboardArrowDown, contentDescription = "")
 
                     DropdownMenu(expanded = showSilverType, onDismissRequest = { /*TODO*/ }) {
-                        silverTypeList.map {
+                        silverTypeListLoaded.map {
                             DropdownMenuItem(text = {
                                 Text(text = "${it.name} | ${it.currentPrice}($/g)")
                             }, onClick = {

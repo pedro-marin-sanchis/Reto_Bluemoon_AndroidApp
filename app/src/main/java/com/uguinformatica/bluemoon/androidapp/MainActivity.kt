@@ -1,8 +1,5 @@
 package com.uguinformatica.bluemoon.androidapp
 
-import android.annotation.SuppressLint
-import android.app.Application
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,8 +20,6 @@ import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.Shop
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,7 +37,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -130,7 +127,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MainScaffold(
     simulationViewModel: SimulationViewModel,
@@ -188,28 +184,28 @@ fun MainScaffold(
                 topAppBarState = true
             }
             composable("ProductScreen") {
-                productViewModel.fetchProducts()
+                //productViewModel.fetchProducts()
                 ProductScreen(paddingValues, navController, productViewModel)
                 topAppBarTitle = "Products"
                 cartButtonState = true
                 topAppBarState = true
             }
             composable("OrderScreen") {
-                orderViewModel.getOrders()
+                //orderViewModel.getOrders()
                 OrderScreen(paddingValues, orderViewModel)
                 topAppBarTitle = "Orders"
                 cartButtonState = false
                 topAppBarState = true
             }
             composable("CartScreen") {
-                cartViewModel.fetchCartItems()
+                //cartViewModel.fetchCartItems()
                 CartScreen(paddingValues, cartViewModel)
                 topAppBarTitle = "Cart"
                 cartButtonState = false
                 topAppBarState = true
             }
             composable("TradeHistoryScreen") {
-                tradeViewModel.fetchTradeList()
+                //tradeViewModel.fetchTradeList()
                 TradeHistoryScreen(tradeViewModel)
                 topAppBarTitle = "TradeHistoryScreen"
                 cartButtonState = true
@@ -223,7 +219,6 @@ fun MainScaffold(
                 )
             ){
                 val id = it.arguments?.getLong("id") ?: 0L
-                productDetailViewModel.fetchProduct(id)
                 ProductDetailScreen(id,paddingValues,navController, productDetailViewModel)
                 topAppBarTitle = "Product Detail"
                 cartButtonState = true
@@ -297,6 +292,14 @@ private fun ModalNavigation(
     var isSelected by remember { mutableStateOf("Products") }
     val scope = rememberCoroutineScope()
 
+    val isLoged by loginViewModel.isLoged.observeAsState(initial = false)
+
+    if (isLoged){
+            drawerViewModel.fetchBalance()
+    }
+
+
+    val userBalance by drawerViewModel.userBalance.observeAsState(initial = 0.0)
 
     ModalNavigationDrawer(
         gesturesEnabled = false,
@@ -312,7 +315,7 @@ private fun ModalNavigation(
                 NavigationDrawerItem(
                     modifier = Modifier.padding(10.dp),
                     icon = { Icon(imageVector = Icons.Default.House, contentDescription = "UserData") },
-                    label = { Text(text = "User Data | Balance: 500$") },
+                    label = { Text(text = "User Data | Balance: $userBalance $") },
                     selected =  isSelected == "User Data",
                     onClick = {
                         isSelected = "User Data"

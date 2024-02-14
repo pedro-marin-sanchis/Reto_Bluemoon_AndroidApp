@@ -4,23 +4,28 @@ import com.uguinformatica.bluemoon.androidapp.data.mappers.orderDtoListToOrderLi
 import com.uguinformatica.bluemoon.androidapp.data.mappers.orderDtoToOrder
 import com.uguinformatica.bluemoon.androidapp.data.mappers.productOrderDtoListToProductList
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.api.BlueMoonApiService
+import com.uguinformatica.bluemoon.androidapp.data.sources.remote.api.getApiErrorType
 import com.uguinformatica.bluemoon.androidapp.domain.models.Order
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.ErrorType
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.Status
 import com.uguinformatica.bluemoon.androidapp.domain.repositories.IOrdersRepository
 import javax.inject.Inject
 
 class OrderRepositoryImpl @Inject constructor(
     val bluemoonApi: BlueMoonApiService
 ) : IOrdersRepository {
-    override suspend fun getOrders(): List<Order> {
-        val response = bluemoonApi.getOrders()
+    override suspend fun getOrders(): Status<List<Order>> {
+        val response = try {
+            bluemoonApi.getOrders()
 
-        if (!response.isSuccessful) {
-            // TODO: Handle error
-
-
-            throw Exception("Error getting orders")
+        } catch (e: Exception) {
+            return Status.Error(ErrorType.Api.Network)
         }
 
-        return orderDtoListToOrderList(response.body()!!)
+        if (!response.isSuccessful) {
+            return Status.Error(getApiErrorType(response.code(), response.errorBody()!!.string()))
+        }
+
+        return Status.Success(orderDtoListToOrderList(response.body()!!))
     }
 }

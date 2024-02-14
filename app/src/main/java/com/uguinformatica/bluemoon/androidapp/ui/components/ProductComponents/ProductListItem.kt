@@ -27,7 +27,11 @@ import com.uguinformatica.bluemoon.androidapp.domain.models.Product
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.ProductViewModel
 
 @Composable
-fun ProductListItem(product: Product, navHostController: NavHostController, productViewModel: ProductViewModel) {
+fun ProductListItem(
+    product: Product,
+    navHostController: NavHostController,
+    productViewModel: ProductViewModel
+) {
 
     val context = LocalContext.current
     val text = "The product was added successful"
@@ -65,11 +69,13 @@ fun ProductListItem(product: Product, navHostController: NavHostController, prod
             IconButton(onClick = {
                 toast.show()
                 productViewModel.addProductToCart(product.id, 1)
+
             }) {
                 Icon(
                     imageVector = Icons.Filled.AddShoppingCart,
                     contentDescription = "Add to the cart"
                 )
+
             }
         }
     }
