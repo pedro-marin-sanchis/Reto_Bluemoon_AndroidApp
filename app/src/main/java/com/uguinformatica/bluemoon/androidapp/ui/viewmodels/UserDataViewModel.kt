@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uguinformatica.bluemoon.androidapp.domain.models.User
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.Status
 import com.uguinformatica.bluemoon.androidapp.domain.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -49,20 +50,24 @@ class UserDataViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            try {
+            val userStatus = withContext(Dispatchers.IO) {
+                userUseCase.getUser()
+            }
 
-                val user = withContext(Dispatchers.IO) {
-                    userUseCase.getUser()
+            when (userStatus) {
+
+                is Status.Success -> {
+                    val user = userStatus.data
+                    _username.postValue(user.userName)
+                    _name.postValue(user.name)
+                    _surname.postValue(user.surnames)
+                    _email.postValue(user.email)
+                    _address.postValue(user.address)
                 }
 
-                _username.postValue(user.userName)
-                _name.postValue(user.name)
-                _surname.postValue(user.surnames)
-                _email.postValue(user.email)
-                _address.postValue(user.address)
+                is Status.Error -> {
 
-            } catch (e: Exception) {
-                e.printStackTrace()
+                }
             }
         }
     }
@@ -155,31 +160,31 @@ class UserDataViewModel @Inject constructor(
     }
 
     fun setName(name: String) {
-        _name.postValue(name)
+        _name.value = name
     }
 
     fun setSurname(surname: String) {
-        _surname.postValue(surname)
+        _surname.value = surname
     }
 
     fun setEmail(email: String) {
-        _email.postValue(email)
+        _email.value = email
     }
 
     fun setUsername(username: String) {
-        _username.postValue(username)
+        _username.value = username
     }
 
     fun setPassword(password: String) {
-        _password.postValue(password)
+        _password.value = password
     }
 
     fun setConfirmPassword(confirmPassword: String) {
-        _confirmPassword.postValue(confirmPassword)
+        _confirmPassword.value = confirmPassword
     }
 
     fun setAddress(address: String) {
-        _address.postValue(address)
+        _address.value = address
     }
 
     fun enableModify() {

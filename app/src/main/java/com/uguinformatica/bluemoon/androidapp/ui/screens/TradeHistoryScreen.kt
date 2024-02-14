@@ -1,4 +1,6 @@
 package com.uguinformatica.bluemoon.androidapp.ui.screens
+
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -21,30 +23,47 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.uguinformatica.bluemoon.androidapp.R
 import com.uguinformatica.bluemoon.androidapp.domain.models.Trade
+import com.uguinformatica.bluemoon.androidapp.ui.components.UiState
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.TradeViewModel
 import java.text.SimpleDateFormat
 
 @Composable
-fun TradeHistoryScreen(tradesViewModel:TradeViewModel) {
+fun TradeHistoryScreen(tradesViewModel: TradeViewModel) {
 
-    LaunchedEffect(key1 = {}){
+    LaunchedEffect(key1 = {}) {
         tradesViewModel.fetchTradeList()
     }
 
-    val trades by tradesViewModel.tradesList.observeAsState(initial = emptyList())
+    val trades by tradesViewModel.tradesList.observeAsState(UiState.Loading())
 
-    LazyColumn {
-        item {
-            Spacer(modifier = Modifier.height(60.dp)) // Height of top app bar
-        }
-        items(trades) { trade ->
-            TradeCard(trade)
+    if (trades is UiState.Loading) {
+        LoadingScreen()
+    } else if (trades is UiState.Error) {
+
+        Toast.makeText(
+            LocalContext.current,
+            (trades as UiState.Error).error,
+            Toast.LENGTH_SHORT
+        ).show()
+
+    } else if (trades is UiState.Loaded) {
+        val trades = (trades as UiState.Loaded).data
+        LazyColumn {
+            item {
+                Spacer(modifier = Modifier.height(60.dp)) // Height of top app bar
+            }
+            items(trades) { trade ->
+                TradeCard(trade)
+            }
         }
     }
+
+
 }
 
 @Composable

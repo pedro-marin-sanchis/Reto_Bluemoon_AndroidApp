@@ -49,6 +49,7 @@ import com.uguinformatica.bluemoon.androidapp.domain.models.SilverType
 import com.uguinformatica.bluemoon.androidapp.domain.models.Tradeable
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_inverseOnSurface
 import com.uguinformatica.bluemoon.androidapp.theme.md_theme_light_primaryContainer
+import com.uguinformatica.bluemoon.androidapp.ui.components.UiState
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.SimulationViewModel
 
 @Composable
@@ -62,10 +63,10 @@ fun SimulationScreen(paddingValues: PaddingValues, simulationViewModel: Simulati
     val openAddItemDialog by simulationViewModel.openAddItemDialog.observeAsState(false)
     val openModifyItemDialog by simulationViewModel.openModifyItemDialog.observeAsState(false)
     val tradeableItemList by simulationViewModel.tradeableItemList.observeAsState(listOf())
-    val tradeableItem by simulationViewModel.tradeableItem.observeAsState()
     val totalTrade by simulationViewModel.totalTrade.observeAsState(0.0)
     var alertDialogTitle by remember { mutableStateOf("") }
     val tradeableItem by simulationViewModel.tradeableItem.observeAsState(Tradeable(0.0,"",0.0, SilverType("",0.0, 0)))
+    var alertDialogText by remember { mutableStateOf("") }
 
     when {
         openAlertDialog -> {
@@ -275,14 +276,20 @@ private fun AddItemDialog(
 
         val description by simulationViewModel.description.observeAsState("")
 
-        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(listOf())
+        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(UiState.Loading())
 
         val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
-        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0.0))
+        val silverType by simulationViewModel.silverType.observeAsState(SilverType("", 0.0, 0))
 
         var dropDownText by remember { mutableStateOf("Select silver type") }
 
+        if (silverTypeList is UiState.Loading) {
+            return@Dialog
+        } else if (silverTypeList is UiState.Error) {
+            return@Dialog
+        }
+        val silverTypeListLoaded = (silverTypeList as UiState.Loaded).data
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -331,7 +338,7 @@ private fun AddItemDialog(
                     Icon(imageVector = Icons.Filled.KeyboardArrowDown, contentDescription = "")
 
                     DropdownMenu(expanded = showSilverType, onDismissRequest = { /*TODO*/ }) {
-                        silverTypeList.map {
+                        silverTypeListLoaded.map {
                             DropdownMenuItem(text = {
                                 Text(text = "${it.name} | ${it.currentPrice}($/g)")
                             }, onClick = {
@@ -384,13 +391,21 @@ private fun ModifyItemDialog(
 
         val description by simulationViewModel.description.observeAsState(tradeable.description)
 
-        val sellPrice by simulationViewModel.sellPrice.observeAsState()
+        //val sellPrice by simulationViewModel.sellPrice.observeAsState()
 
-        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(emptyList())
+        val silverTypeList by simulationViewModel.silverTypeList.observeAsState(UiState.Loading())
 
         val showSilverType by simulationViewModel.showSilverTypeList.observeAsState(false)
 
         var dropDownText by remember { mutableStateOf("Select silver type") }
+
+        if (silverTypeList is UiState.Loading) {
+            return@Dialog
+        } else if (silverTypeList is UiState.Error) {
+            return@Dialog
+        }
+
+        val silverTypeListLoaded = (silverTypeList as UiState.Loaded).data
 
         Card(
             modifier = Modifier
@@ -440,7 +455,7 @@ private fun ModifyItemDialog(
                     Icon(imageVector = Icons.Filled.KeyboardArrowDown, contentDescription = "")
 
                     DropdownMenu(expanded = showSilverType, onDismissRequest = { /*TODO*/ }) {
-                        silverTypeList.map {
+                        silverTypeListLoaded.map {
                             DropdownMenuItem(text = {
                                 Text(text = "${it.name} | ${it.currentPrice}($/g)")
                             }, onClick = {

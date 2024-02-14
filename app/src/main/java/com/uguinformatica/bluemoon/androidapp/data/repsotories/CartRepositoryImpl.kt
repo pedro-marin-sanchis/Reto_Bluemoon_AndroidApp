@@ -2,75 +2,106 @@ package com.uguinformatica.bluemoon.androidapp.data.repsotories
 
 import com.uguinformatica.bluemoon.androidapp.data.mappers.cartItemsDtoListToCartItemsList
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.AddCartItemDTO
-import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CartItemDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.CreateOrderDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.DTO.UpdateCartItemDTO
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.api.BlueMoonApiService
+import com.uguinformatica.bluemoon.androidapp.data.sources.remote.api.getApiErrorType
 import com.uguinformatica.bluemoon.androidapp.domain.models.CartItem
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.ErrorType
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.Status
 import com.uguinformatica.bluemoon.androidapp.domain.repositories.ICartRepository
 import javax.inject.Inject
 
 class CartRepositoryImpl @Inject constructor(
     val blueMoonApi: BlueMoonApiService
 ) : ICartRepository {
-    override suspend fun getCartItems(): List<CartItem> {
-        val response = blueMoonApi.getCartItems()
+    override suspend fun getCartItems(): Status<List<CartItem>> {
+        val response = try {
+            blueMoonApi.getCartItems()
+
+        } catch (e: Exception) {
+            return Status.Error(ErrorType.Api.Network)
+        }
 
         if (!response.isSuccessful) {
-            // TODO: throw exception
 
-            throw Exception("Error while getting cart items")
+            return Status.Error(getApiErrorType(response.code(), response.errorBody()!!.string()))
         }
 
 
-        return cartItemsDtoListToCartItemsList(response.body()!!)
+        return Status.Success(cartItemsDtoListToCartItemsList(response.body()!!))
     }
 
-    override suspend fun deleteCartItem(productId: Long) {
-        val response = blueMoonApi.deleteCartItem(productId)
+    override suspend fun deleteCartItem(productId: Long): Status<Unit> {
+        val response = try {
+            blueMoonApi.deleteCartItem(productId)
 
-        if (!response.isSuccessful) {
-            // TODO: throw exception
-
-            throw Exception("Error while deleting cart item")
+        } catch (e: Exception) {
+            return Status.Error(ErrorType.Api.Network)
         }
 
-    }
-
-    override suspend fun modifyCartItemQuantity(productId: Long, quantity: Int) {
-        val response = blueMoonApi.updateCartItem(UpdateCartItemDTO(quantity), productId)
-
         if (!response.isSuccessful) {
-            // TODO: throw exception
-
-            throw Exception("Error while updating cart item")
+            return Status.Error(getApiErrorType(response.code(), response.errorBody()!!.string()))
         }
 
+        return Status.Success(Unit)
     }
 
-    override suspend fun checkout() {
-        val userResponse = blueMoonApi.getUser()
+    override suspend fun modifyCartItemQuantity(productId: Long, quantity: Int): Status<Unit> {
+        val response = try {
+            blueMoonApi.updateCartItem(UpdateCartItemDTO(quantity), productId)
+
+        } catch (e: Exception) {
+            return Status.Error(ErrorType.Api.Network)
+        }
+
+        if (!response.isSuccessful) {
+            return Status.Error(getApiErrorType(response.code(), response.errorBody()!!.string()))
+        }
+
+        return Status.Success(Unit)
+    }
+
+    override suspend fun checkout(): Status<Unit> {
+        val userResponse = try {
+            blueMoonApi.getUser()
+
+        } catch (e: Exception) {
+            return Status.Error(ErrorType.Api.Network)
+        }
 
         if (!userResponse.isSuccessful) {
-            throw Exception("Error getting user")
+            return Status.Error(
+                getApiErrorType(
+                    userResponse.code(),
+                    userResponse.errorBody()!!.string()
+                )
+            )
         }
 
         val response = blueMoonApi.addOrder(CreateOrderDTO(userResponse.body()!!.id!!))
 
         if (!response.isSuccessful) {
 
-            throw Exception("Error while creating order")
+            return Status.Error(getApiErrorType(response.code(), response.errorBody()!!.string()))
         }
 
+        return Status.Success(Unit)
     }
 
-    override suspend fun addProductToCart(productId: Long, quantity: Int) {
-        val response = blueMoonApi.addCartItem(AddCartItemDTO(productId, quantity))
+    override suspend fun addProductToCart(productId: Long, quantity: Int): Status<Unit> {
+        val response = try {
+            blueMoonApi.addCartItem(AddCartItemDTO(productId, quantity))
+
+        } catch (e: Exception) {
+            return Status.Error(ErrorType.Api.Network)
+        }
 
         if (!response.isSuccessful) {
 
-            // TODO: throw exception
-            throw Exception("Error while adding product to cart")
+            return Status.Error(getApiErrorType(response.code(), response.errorBody()!!.string()))
         }
+
+        return Status.Success(Unit)
     }
 }

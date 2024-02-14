@@ -1,5 +1,6 @@
 package com.uguinformatica.bluemoon.androidapp.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -24,32 +26,99 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.uguinformatica.bluemoon.androidapp.domain.models.CartItem
 import com.uguinformatica.bluemoon.androidapp.ui.components.CartComponents.CartProductItem
+import com.uguinformatica.bluemoon.androidapp.ui.components.UiState
 import com.uguinformatica.bluemoon.androidapp.ui.viewmodels.CartViewModel
+
 
 @Composable
 fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
 
-    LaunchedEffect(key1 = {}){
+    LaunchedEffect(key1 = {}) {
         cartViewModel.fetchCartItems()
     }
-    val productItems by cartViewModel.cartItems.observeAsState(emptyList())
+
+    val productItems by cartViewModel.cartItems.observeAsState(UiState.Loading())
 
     val openAlertDialogConfirm by cartViewModel.openAlertConfirm.observeAsState(false)
     val openAlertDialogDelete by cartViewModel.openAlertDelete.observeAsState(false)
     val openDialogModifyQuantity by cartViewModel.openDialogModify.observeAsState(false)
 
+
+    val toastText by cartViewModel.openToast.observeAsState("")
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = toastText) {
+        if (toastText.isNotEmpty()) {
+
+            Toast.makeText(
+                context,
+                toastText,
+                Toast.LENGTH_SHORT
+            ).show()
+            cartViewModel.setOpenToast("")
+        }
+    }
+
+    if (productItems is UiState.Loading) {
+        LoadingScreen()
+    } else if (productItems is UiState.Error) {
+
+        Toast.makeText(
+            context,
+            (productItems as UiState.Error).error,
+            Toast.LENGTH_SHORT
+        ).show()
+
+    } else if (productItems is UiState.Loaded) {
+        val items = (productItems as UiState.Loaded<List<CartItem>>).data
+
+        if (items.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Your cart is empty")
+            }
+        } else {
+            LoadedCartScreen(
+                openAlertDialogConfirm,
+                cartViewModel,
+                openAlertDialogDelete,
+                openDialogModifyQuantity,
+                paddingValues,
+                items
+            )
+        }
+    }
+}
+
+@Composable
+private fun LoadedCartScreen(
+    openAlertDialogConfirm: Boolean,
+    cartViewModel: CartViewModel,
+    openAlertDialogDelete: Boolean,
+    openDialogModifyQuantity: Boolean,
+    paddingValues: PaddingValues,
+    items: List<CartItem>
+) {
     when {
         openAlertDialogConfirm -> {
             AlertDialogConfirm(
                 onDismissRequest = { cartViewModel.closeConfirmDialog() },
                 onConfirmation = {
                     cartViewModel.checkout()
-                    cartViewModel.closeConfirmDialog() },
+                    cartViewModel.closeConfirmDialog()
+                },
                 dialogTitle = "Confirm the order"
             )
         }
@@ -74,7 +143,8 @@ fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
                 onDismissRequest = { cartViewModel.closeModifyDialog() },
                 onConfirmation = {
                     cartViewModel.updateCartItemQuantity()
-                    cartViewModel.closeModifyDialog() },
+                    cartViewModel.closeModifyDialog()
+                },
                 cartViewModel
             )
         }
@@ -89,14 +159,19 @@ fun CartScreen(paddingValues: PaddingValues, cartViewModel: CartViewModel) {
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(1),
             content = {
-                items(productItems) { index ->
+                items(items) { index ->
                     CartProductItem(index, cartViewModel)
                 }
                 item {
                     Button(
                         onClick = { cartViewModel.openConfirmDialog() },
                         modifier = Modifier
-                            .padding(start = 50.dp, end = 50.dp, bottom = 15.dp, top = 15.dp)
+                            .padding(
+                                start = 50.dp,
+                                end = 50.dp,
+                                bottom = 15.dp,
+                                top = 15.dp
+                            )
                     ) {
                         Text(text = "Checkout")
                     }

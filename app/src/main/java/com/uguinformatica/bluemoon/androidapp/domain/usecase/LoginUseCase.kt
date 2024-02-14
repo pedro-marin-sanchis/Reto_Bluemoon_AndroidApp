@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.asLiveData
 import com.uguinformatica.bluemoon.androidapp.dataStore
 import com.uguinformatica.bluemoon.androidapp.domain.models.UserLogin
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.Status
 import com.uguinformatica.bluemoon.androidapp.domain.repositories.ILoginRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -17,14 +18,9 @@ class LoginUseCase @Inject constructor(
     val loginRepository: ILoginRepository,
     @ApplicationContext val context: Context
 ) {
-    suspend fun login(userLoginData: UserLogin) {
+    suspend fun login(userLoginData: UserLogin): Status<Unit> {
 
-        try {
-            loginRepository.login(userLoginData)
-
-        } catch (e: Exception) {
-            throw Exception("Error while getting token")
-        }
+        return loginRepository.login(userLoginData)
 
     }
 

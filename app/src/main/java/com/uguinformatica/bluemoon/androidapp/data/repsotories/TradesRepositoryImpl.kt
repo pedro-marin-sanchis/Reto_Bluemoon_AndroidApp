@@ -4,49 +4,63 @@ import com.uguinformatica.bluemoon.androidapp.data.mappers.silverTypeDtoListToSi
 import com.uguinformatica.bluemoon.androidapp.data.mappers.tradeCreateToCreateTradeDTO
 import com.uguinformatica.bluemoon.androidapp.data.mappers.tradeDtoListToTradeList
 import com.uguinformatica.bluemoon.androidapp.data.sources.remote.api.BlueMoonApiService
+import com.uguinformatica.bluemoon.androidapp.data.sources.remote.api.getApiErrorType
 import com.uguinformatica.bluemoon.androidapp.domain.models.SilverType
 import com.uguinformatica.bluemoon.androidapp.domain.models.Trade
 import com.uguinformatica.bluemoon.androidapp.domain.models.TradeCreate
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.ErrorType
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.Status
 import com.uguinformatica.bluemoon.androidapp.domain.repositories.ITradesRepository
 import javax.inject.Inject
 
 class TradesRepositoryImpl @Inject constructor(
     private val blueMoonApi: BlueMoonApiService
 ): ITradesRepository {
-    override suspend fun getTrades(): List<Trade> {
-        val response = blueMoonApi.getTrades()
+    override suspend fun getTrades(): Status<List<Trade>> {
+        val response = try {
+            blueMoonApi.getTrades()
+
+        } catch (e: Exception) {
+            return Status.Error(ErrorType.Api.Network)
+        }
 
         if (!response.isSuccessful) {
-            println(response.errorBody())
-            throw Exception("Error getting trades")
+            return Status.Error(getApiErrorType(response.code(), response.errorBody()!!.string()))
         }
 
         println(response.body())
 
-        return tradeDtoListToTradeList(response.body()!!)
+        return Status.Success(tradeDtoListToTradeList(response.body()!!))
 
     }
 
-    override suspend fun createTrade(trade: TradeCreate) {
-        val response = blueMoonApi.addTrade(tradeCreateToCreateTradeDTO(trade))
+    override suspend fun createTrade(trade: TradeCreate): Status<Unit> {
+        val response = try {
+            blueMoonApi.addTrade(tradeCreateToCreateTradeDTO(trade))
 
-        if (!response.isSuccessful) {
-            println(response.errorBody()!!.string())
-            println(response.code())
-            throw Exception("Error creating trade")
+        } catch (e: Exception) {
+            return Status.Error(ErrorType.Api.Network)
         }
 
+        if (!response.isSuccessful) {
+            return Status.Error(getApiErrorType(response.code(), response.errorBody()!!.string()))
+        }
+
+        return Status.Success(Unit)
     }
 
-    override suspend fun getSilverTypes(): List<SilverType> {
-        val response = blueMoonApi.getSilverTypes()
+    override suspend fun getSilverTypes(): Status<List<SilverType>> {
+        val response = try {
+            blueMoonApi.getSilverTypes()
 
-        if (!response.isSuccessful) {
-            println(response.errorBody())
-            println(response.code())
-            throw Exception("Error getting silver types")
+        } catch (e: Exception) {
+            return Status.Error(ErrorType.Api.Network)
         }
 
-        return silverTypeDtoListToSilverTypeList(response.body()!!)
+        if (!response.isSuccessful) {
+            return Status.Error(getApiErrorType(response.code(), response.errorBody()!!.string()))
+        }
+
+        return Status.Success(silverTypeDtoListToSilverTypeList(response.body()!!))
     }
 }

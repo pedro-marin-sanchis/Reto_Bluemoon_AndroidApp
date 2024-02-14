@@ -5,8 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uguinformatica.bluemoon.androidapp.domain.models.Product
+import com.uguinformatica.bluemoon.androidapp.domain.models.exceptions.Status
 import com.uguinformatica.bluemoon.androidapp.domain.usecase.CartUseCase
 import com.uguinformatica.bluemoon.androidapp.domain.usecase.ProductUseCase
+import com.uguinformatica.bluemoon.androidapp.ui.ErrorTypeToStringConverterImpl
+import com.uguinformatica.bluemoon.androidapp.ui.components.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,16 +22,30 @@ class ProductDetailViewModel @Inject constructor(
     val cartUseCase: CartUseCase
 ): ViewModel() {
 
-    private var _product = MutableLiveData<Product>()
+    private var _product = MutableLiveData<UiState<Product>>(UiState.Loading())
 
-    val product: LiveData<Product> = _product
+    val product: LiveData<UiState<Product>> = _product
 
     fun fetchProduct(productId: Long){
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val cartItems = productsUseCase.getProduct(productId)
+                val status = productsUseCase.getProduct(productId)
 
-                _product.postValue(cartItems)
+                when (status) {
+                    is Status.Success -> {
+                        _product.postValue(UiState.Loaded(status.data))
+                    }
+                    is Status.Error -> {
+                        _product.postValue(UiState.Error(ErrorTypeToStringConverterImpl().convert(status.error)))
+                    }
+                }
+
+                /*if (status is Status.Success<Product>){
+                    _product.postValue(UiState.Loaded(status.data))
+                }
+                if (status is Status.Error){
+                    _product.postValue(UiState.Error(ErrorTypeToStringConverterImpl().convert(status.error)))
+                }*/
             }
         }
     }

@@ -19,10 +19,10 @@ fun CustomField(
         enabled = enabled,
         value = value,
         onValueChange = { onValueChange(it) },
-        label = { label },
-        keyboardOptions = KeyboardOptions.Default.copy(
+        label = label,
+       /* keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Text
-        ),
+        ),*/
         singleLine = true,
         modifier = Modifier.fillMaxWidth()
     )
