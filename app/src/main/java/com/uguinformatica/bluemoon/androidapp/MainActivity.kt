@@ -207,7 +207,7 @@ fun MainScaffold(
             composable("TradeHistoryScreen") {
                 //tradeViewModel.fetchTradeList()
                 TradeHistoryScreen(tradeViewModel)
-                topAppBarTitle = "TradeHistoryScreen"
+                topAppBarTitle = "Trade History"
                 cartButtonState = true
                 topAppBarState = true
             }
