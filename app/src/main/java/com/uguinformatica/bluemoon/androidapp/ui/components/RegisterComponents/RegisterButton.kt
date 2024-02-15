@@ -21,7 +21,10 @@ fun RegisterButton(navHostController: NavHostController, onRegister: () -> Unit)
         contentAlignment = Alignment.Center
     ) {
         Button(
-            onClick = { onRegister() },
+            onClick = {
+                onRegister()
+                navHostController.navigate("LoginScreen")
+            },
             modifier = Modifier
                 .fillMaxSize()
         ) {
